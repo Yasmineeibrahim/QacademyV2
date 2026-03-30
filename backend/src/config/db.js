@@ -15,6 +15,7 @@ db.connect((err) => {
     console.error("Database connection failed ❌", err);
   } else {
     console.log("MySQL Connected ✅");
+    console.log(`Connected to database: ${process.env.DB_NAME}`);
   }
 });
 
