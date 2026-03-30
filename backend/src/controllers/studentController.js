@@ -52,6 +52,37 @@ export const getStudents = (req, res) => {
   });
 };
 
+export const loginStudent = (req, res) => {
+  const { email, password } = req.body;
+
+  const sql = "SELECT * FROM students WHERE email = ?";
+
+  db.query(sql, [email], async (err, result) => {
+    if (err) return res.status(500).json(err);
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "User not found " });
+    }
+
+    const user = result[0];
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: "Wrong password " });
+    }
+
+    res.json({
+      message: "Login successful ",
+      user: {
+        id: user.id,
+        email: user.email,
+        first_name: user.first_name
+      }
+    });
+  });
+};
+
 export const getDbStatus = (req, res) => {
   db.query("SELECT DATABASE() AS databaseName", (dbErr, dbResult) => {
     if (dbErr) {

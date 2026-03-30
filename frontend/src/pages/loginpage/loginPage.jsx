@@ -1,8 +1,51 @@
 import React from 'react'
 import bgVideo from '../../assets/loginpage/bg.mp4'
 import './loginPage.css'
-
+import { useState } from "react";
+import axios from "axios";
 const loginPage = () => {
+    const [form, setForm] = useState({
+    email: "",
+    password: ""
+  });
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const loginService = async (data) => {
+    return await axios.post(
+      "http://localhost:5000/api/students/login",
+      data
+    );
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await loginService(form);
+
+      console.log(res.data);
+      alert("Login successful ✅");
+
+      // Optional: store user
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+    } catch (err) {
+      console.error(err);
+
+      if (err.response) {
+        alert(err.response.data.message);
+      } else {
+        alert("Server error ❌");
+      }
+    }
+  };
+
   return (
     <section className="login-page">
       <video
@@ -21,9 +64,9 @@ const loginPage = () => {
       <div className="login-content">
         <h1>Welcome Back!</h1>
         <p>Please enter your credentials to log in.</p>
-        <form className="login-form">
-          <input type="email" placeholder="Email" required />
-          <input type="password" placeholder="Password" required />
+        <form className="login-form" onSubmit={handleSubmit}>
+          <input type="email" placeholder="Email" name="email" value={form.email} onChange={handleChange} required />
+          <input type="password" placeholder="Password" name="password" value={form.password} onChange={handleChange} required />
           <button type="submit">Login</button>
         </form>
 
