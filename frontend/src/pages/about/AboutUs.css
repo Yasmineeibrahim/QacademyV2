@@ -1,0 +1,579 @@
+/* ══════════════════════════════════════════════
+   AboutUs.css — Styles for the About Us page
+══════════════════════════════════════════════ */
+
+/* ── Shared ── */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ── Badge ── */
+.au-badge {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #fff613;
+  background: #042a4e;
+  padding: 4px 14px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 14px;
+}
+
+/* ── Section Heading ── */
+.au-section-heading {
+  text-align: center;
+  margin-bottom: 52px;
+}
+
+.au-section-heading h2 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 2.2rem;
+  color: #042a4e;
+  line-height: 1.15;
+  margin: 0 0 12px;
+}
+
+.au-section-heading p {
+  color: rgba(4, 42, 78, 0.52);
+  font-size: 15px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* ══════════════════════════════════════════════
+   HERO BANNER
+══════════════════════════════════════════════ */
+.au-hero {
+  background: linear-gradient(135deg, #042a4e 0%, #0d3560 60%, #1a4a7a 100%);
+  padding: 120px 40px 90px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.au-hero__ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 246, 19, 0.07);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.au-hero h1 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  color: #ffffff;
+  line-height: 1.1;
+  margin: 0 0 20px;
+}
+
+.au-hero h1 span {
+  color: #fff613;
+}
+
+.au-hero p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 16px;
+  max-width: 540px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ══════════════════════════════════════════════
+   1. OUR BACKGROUND STORY
+══════════════════════════════════════════════ */
+.au-background {
+  padding: 90px 40px;
+  background: #ffffff;
+}
+
+.au-background__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+}
+
+.au-story-card {
+  border: 1px solid rgba(4, 42, 78, 0.09);
+  border-radius: 16px;
+  padding: 32px 28px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(4, 42, 78, 0.06);
+  height: 100%;
+}
+
+.au-story-card__year {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 3.5rem;
+  color: rgba(4, 42, 78, 0.05);
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  line-height: 1;
+  user-select: none;
+}
+
+.au-story-card__accent {
+  width: 36px;
+  height: 4px;
+  background: #fff613;
+  border-radius: 2px;
+  margin-bottom: 18px;
+}
+
+.au-story-card h3 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.15rem;
+  color: #042a4e;
+  margin-bottom: 12px;
+}
+
+.au-story-card p {
+  color: rgba(4, 42, 78, 0.58);
+  line-height: 1.7;
+  font-size: 14.5px;
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════
+   2. HOW WE STARTED
+══════════════════════════════════════════════ */
+.au-started {
+  padding: 90px 40px;
+  background: #edf2f4;
+}
+
+.au-started__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 40px;
+  align-items: center;
+}
+
+/* Timeline */
+.au-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.au-timeline__item {
+  display: flex;
+  gap: 20px;
+  position: relative;
+}
+
+.au-timeline__line {
+  position: absolute;
+  left: 19px;
+  top: 44px;
+  width: 2px;
+  height: calc(100% - 4px);
+  background: rgba(4, 42, 78, 0.1);
+}
+
+.au-timeline__circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #042a4e;
+  color: #fff613;
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.au-timeline__content {
+  padding-bottom: 32px;
+}
+
+.au-timeline__content p:first-child {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1rem;
+  color: #042a4e;
+  margin: 8px 0 6px;
+}
+
+.au-timeline__content p:last-child {
+  color: rgba(4, 42, 78, 0.55);
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* Stats block */
+.au-stats {
+  background: linear-gradient(160deg, #042a4e 0%, #0d3560 100%);
+  border-radius: 20px;
+  padding: 48px 36px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.au-stats__ring {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 246, 19, 0.07);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.au-stat {
+  text-align: center;
+  z-index: 1;
+}
+
+.au-stat__value {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.9rem;
+  color: #fff613;
+  margin: 0 0 6px;
+}
+
+.au-stat__label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════
+   3. VISION & MISSION
+══════════════════════════════════════════════ */
+.au-vision-mission {
+  padding: 90px 40px;
+  background: #ffffff;
+}
+
+.au-vision-mission__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px;
+}
+
+.au-vision-card {
+  background: #042a4e;
+  border-radius: 20px;
+  padding: 44px 36px;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+.au-vision-card__ring {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 246, 19, 0.08);
+  top: -60px;
+  right: -60px;
+  pointer-events: none;
+}
+
+.au-vision-card__emoji {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  line-height: 1;
+}
+
+.au-vision-card h3 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.4rem;
+  color: #ffffff;
+  margin: 0 0 16px;
+}
+
+.au-vision-card p {
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.75;
+  font-size: 14.5px;
+  margin: 0;
+}
+
+.au-mission-card {
+  border: 2px solid #042a4e;
+  border-radius: 20px;
+  padding: 44px 36px;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  background: #ffffff;
+}
+
+.au-mission-card__ring {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 1px solid rgba(4, 42, 78, 0.06);
+  bottom: -60px;
+  left: -60px;
+  pointer-events: none;
+}
+
+.au-mission-card__emoji {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  line-height: 1;
+}
+
+.au-mission-card h3 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.4rem;
+  color: #042a4e;
+  margin: 0 0 16px;
+}
+
+.au-mission-card p {
+  color: rgba(4, 42, 78, 0.58);
+  line-height: 1.75;
+  font-size: 14.5px;
+  margin: 0;
+}
+
+.au-values-card {
+  background: #fff613;
+  border-radius: 20px;
+  padding: 44px 36px;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+.au-values-card__emoji {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  line-height: 1;
+}
+
+.au-values-card h3 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.4rem;
+  color: #042a4e;
+  margin: 0 0 16px;
+}
+
+.au-values-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.au-values-list__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.au-values-list__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #042a4e;
+  flex-shrink: 0;
+}
+
+.au-values-list__text {
+  font-size: 14px;
+  color: #042a4e;
+  font-weight: 600;
+}
+
+/* ══════════════════════════════════════════════
+   4. POLICY & RULES — Premium Redesign
+══════════════════════════════════════════════ */
+.au-policy {
+  padding: 100px 40px;
+  background: #f8f9fb;
+}
+
+.au-policy__intro {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.au-policy__label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #042a4e;
+  border: 1px solid rgba(4, 42, 78, 0.25);
+  padding: 6px 18px;
+  border-radius: 2px;
+  margin-bottom: 20px;
+}
+
+.au-policy__intro h2 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 2.3rem;
+  color: #042a4e;
+  margin: 0 0 14px;
+  line-height: 1.15;
+}
+
+.au-policy__intro p {
+  font-size: 15px;
+  color: rgba(4, 42, 78, 0.5);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* Policy grid */
+.au-policy__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 2px;
+  background: rgba(4, 42, 78, 0.08);
+  border: 1px solid rgba(4, 42, 78, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* Individual policy block */
+.au-policy-block {
+  background: #ffffff;
+  padding: 36px 32px;
+  position: relative;
+  transition: background 0.2s ease;
+}
+
+.au-policy-block:hover {
+  background: #fafbfc;
+}
+
+.au-policy-block__header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(4, 42, 78, 0.07);
+}
+
+.au-policy-block__number {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 11px;
+  color: rgba(4, 42, 78, 0.25);
+  letter-spacing: 2px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.au-policy-block__title {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 0.95rem;
+  color: #042a4e;
+  letter-spacing: 0.3px;
+  margin: 0;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+}
+
+.au-policy-block__rules {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.au-policy-block__rule {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(4, 42, 78, 0.04);
+}
+
+.au-policy-block__rule:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.au-policy-block__rule-marker {
+  width: 16px;
+  height: 1px;
+  background: #042a4e;
+  flex-shrink: 0;
+  margin-top: 10px;
+  opacity: 0.3;
+}
+
+.au-policy-block__rule-text {
+  font-size: 13.5px;
+  color: rgba(4, 42, 78, 0.7);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════
+   CTA
+══════════════════════════════════════════════ */
+.au-cta {
+  padding: 80px 40px;
+  background: linear-gradient(135deg, #042a4e 0%, #0d3560 100%);
+  text-align: center;
+}
+
+.au-cta__eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #fff613;
+  margin-bottom: 16px;
+}
+
+.au-cta h2 {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 2rem;
+  color: #ffffff;
+  margin: 0 0 12px;
+}
+
+.au-cta p {
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 32px;
+  font-size: 15px;
+}
+
+.au-cta__btn {
+  display: inline-block;
+  background: #fff613;
+  color: #042a4e;
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 15px;
+  padding: 14px 36px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.au-cta__btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(255, 246, 19, 0.3);
+}
