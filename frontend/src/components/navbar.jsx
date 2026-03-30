@@ -11,10 +11,16 @@ export const Navbar = () => {
   const dropdownRef = useRef(null)
   const isLoginPage = location.pathname === '/login'
 
+  const readStoredUser = () => {
+    try {
+      return JSON.parse(localStorage.getItem('user'))
+    } catch {
+      return null
+    }
+  }
+
   // Read auth state (set by loginPage.jsx → localStorage)
-  const [user, setUser] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('user')) } catch { return null }
-  })
+  const [user, setUser] = useState(() => readStoredUser())
 
 
 
@@ -24,6 +30,18 @@ export const Navbar = () => {
     handleScroll()
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  useEffect(() => {
+    const syncAuthState = () => setUser(readStoredUser())
+
+    window.addEventListener('storage', syncAuthState)
+    window.addEventListener('auth-changed', syncAuthState)
+
+    return () => {
+      window.removeEventListener('storage', syncAuthState)
+      window.removeEventListener('auth-changed', syncAuthState)
+    }
   }, [])
 
   // Close dropdown when clicking outside
@@ -39,14 +57,19 @@ export const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('user')
+    window.dispatchEvent(new Event('auth-changed'))
     setUser(null)
     setDropdownOpen(false)
     navigate('/')
   }
 
   // Derive initials for avatar
+  const displayName = user?.name || user?.first_name || user?.email
+
   const initials = user?.name
     ? user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+    : user?.first_name
+      ? user.first_name[0].toUpperCase()
     : user?.email
       ? user.email[0].toUpperCase()
       : '?'
@@ -80,7 +103,7 @@ export const Navbar = () => {
             {dropdownOpen && (
               <div className="profile-dropdown">
                 <div className="profile-dropdown__header">
-                  <span className="profile-dropdown__name">{user.name || user.email}</span>
+                  <span className="profile-dropdown__name">{displayName}</span>
                   {user.name && <span className="profile-dropdown__email">{user.email}</span>}
                 </div>
                 <div className="profile-dropdown__divider" />

@@ -3,7 +3,9 @@ import bgVideo from '../../assets/loginpage/bg.mp4'
 import './loginPage.css'
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 const loginPage = () => {
+  const navigate = useNavigate();
     const [form, setForm] = useState({
     email: "",
     password: ""
@@ -30,10 +32,10 @@ const loginPage = () => {
       const res = await loginService(form);
 
       console.log(res.data);
-      alert("Login successful ✅");
 
-      // Optional: store user
       localStorage.setItem("user", JSON.stringify(res.data.user));
+      window.dispatchEvent(new Event('auth-changed'));
+      navigate('/');
 
     } catch (err) {
       console.error(err);
@@ -41,7 +43,7 @@ const loginPage = () => {
       if (err.response) {
         alert(err.response.data.message);
       } else {
-        alert("Server error ❌");
+        alert("Server error");
       }
     }
   };
