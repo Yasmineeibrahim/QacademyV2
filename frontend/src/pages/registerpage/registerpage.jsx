@@ -9,6 +9,7 @@ const registerpage = () => {
     last_name: "",
     email: "",
     password: "",
+    confirmPassword: "",
     phone_number: ""
   });
 
@@ -22,10 +23,17 @@ const registerpage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (form.password !== form.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    const { confirmPassword, ...payload } = form;
+
     try {
       const res = await axios.post(
         "http://localhost:5000/api/students",
-        form
+        payload
       );
 
       console.log(res.data);
@@ -33,7 +41,8 @@ const registerpage = () => {
 
     } catch (err) {
       console.error(err);
-      alert("Error creating account");
+      const apiMessage = err?.response?.data?.message;
+      alert(apiMessage || "Error creating account");
     }
   };
   return (
@@ -67,7 +76,7 @@ const registerpage = () => {
             <input type="email" placeholder="Email Address" name="email" value={form.email} onChange={handleChange} />
             <input type="tel" placeholder="Phone Number" name="phone_number" value={form.phone_number} onChange={handleChange} />
             <input type="password" placeholder="Password" name="password" value={form.password} onChange={handleChange} />
-            <input type="password" placeholder="Confirm Password" name="confirmPassword" />
+            <input type="password" placeholder="Confirm Password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} />
 
             <button type="submit">Register</button>
           </form>
