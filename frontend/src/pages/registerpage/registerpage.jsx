@@ -1,8 +1,50 @@
 import React from 'react'
 import BeamGridBackground from '../../components/registerPage'
 import './registerpage.css'
-
+import { useState } from "react";
+import axios from "axios";
 const registerpage = () => {
+   const [form, setForm] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    phone_number: ""
+  });
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (form.password !== form.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    const { confirmPassword, ...payload } = form;
+
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/students",
+        payload
+      );
+
+      console.log(res.data);
+      alert("Account created successfully");
+
+    } catch (err) {
+      console.error(err);
+      const apiMessage = err?.response?.data?.message;
+      alert(apiMessage || "Error creating account");
+    }
+  };
   return (
     <div className="register-page">
       <BeamGridBackground
@@ -25,16 +67,16 @@ const registerpage = () => {
           <h1>Create Account</h1>
           <p>Join QAcademy and start building your engineering path.</p>
 
-          <form className="register-form">
+          <form className="register-form" onSubmit={handleSubmit}>
             <div className="register-row">
-              <input type="text" placeholder="First Name" name="firstName" />
-              <input type="text" placeholder="Last Name" name="lastName" />
+              <input type="text" placeholder="First Name" name="first_name" value={form.first_name} onChange={handleChange} />
+              <input type="text" placeholder="Last Name" name="last_name" value={form.last_name} onChange={handleChange} />
             </div>
 
-            <input type="email" placeholder="Email Address" name="email" />
-            <input type="tel" placeholder="Phone Number" name="phone" />
-            <input type="password" placeholder="Password" name="password" />
-            <input type="password" placeholder="Confirm Password" name="confirmPassword" />
+            <input type="email" placeholder="Email Address" name="email" value={form.email} onChange={handleChange} />
+            <input type="tel" placeholder="Phone Number" name="phone_number" value={form.phone_number} onChange={handleChange} />
+            <input type="password" placeholder="Password" name="password" value={form.password} onChange={handleChange} />
+            <input type="password" placeholder="Confirm Password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} />
 
             <button type="submit">Register</button>
           </form>
