@@ -11,8 +11,9 @@ import Footer from './components/footer/footer'
 import './App.css'
 import LoginPage          from './pages/loginpage/loginPage'
 import RegisterPage       from './pages/registerpage/registerpage'
-import AboutUs from './pages/about/AboutUs'
+import AboutUs from './pages/aboutPAGE/AboutUs'
 import ProfilePage from './pages/profilepage/profilePage'
+import StudentCourses from './pages/studentCoursesPage/studentCourses'
 
 function HomePage() {
   return (
@@ -40,6 +41,7 @@ function AppContent() {
         <Route path="/register"      element={<RegisterPage />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/my-courses" element={<StudentCourses />} />
       </Routes>
       {!isAuthPage && <Footer />}
     </>

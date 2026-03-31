@@ -1,8 +1,11 @@
 import React from 'react'
+import './profilePage.css'
 
 const ProfilePage = () => {
   return (
-    <div>Profile Page</div>
+    <main className="simple-page">
+      <h1 className="simple-page__title">Profile Page</h1>
+    </main>
   )
 }
 
