@@ -11,7 +11,7 @@ import Footer from './components/footer/footer'
 import './App.css'
 import LoginPage          from './pages/loginpage/loginPage'
 import RegisterPage       from './pages/registerpage/registerpage'
-import AboutUs from './pages/aboutPAGE/AboutUs'
+import AboutUs from './pages/about/AboutUs'
 import ProfilePage from './pages/profilepage/profilePage'
 import StudentCourses from './pages/studentCoursesPage/studentCourses'
 
