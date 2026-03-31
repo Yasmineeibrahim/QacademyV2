@@ -20,14 +20,19 @@ function useInView(threshold = 0.15) {
 /* ── Section wrapper with fade-in-up animation ── */
 const FadeSection = ({ children, delay = 0 }) => {
   const [ref, visible] = useInView()
+  const delayClass = {
+    0: 'au-fade--d0',
+    0.08: 'au-fade--d08',
+    0.12: 'au-fade--d12',
+    0.15: 'au-fade--d15',
+    0.16: 'au-fade--d16',
+    0.24: 'au-fade--d24',
+  }[delay] || 'au-fade--d0'
+
   return (
     <div
       ref={ref}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(40px)',
-        transition: `opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s`,
-      }}
+      className={`au-fade ${visible ? 'au-fade--visible' : ''} ${delayClass}`}
     >
       {children}
     </div>
@@ -53,12 +58,12 @@ const SectionHeading = ({ badge, title, subtitle }) => (
 ══════════════════════════════════════════════ */
 const AboutUs = () => {
   return (
-    <div style={{ background: '#ffffff', overflowX: 'hidden' }}>
+    <div className="au-page">
 
       {/* ── HERO BANNER ── */}
       <div className="au-hero">
         {[300, 500, 700].map((size, i) => (
-          <div key={i} className="au-hero__ring" style={{ width: size, height: size }} />
+          <div key={i} className={`au-hero__ring au-hero__ring--${size}`} />
         ))}
         <Badge text="About Us" />
         <h1>

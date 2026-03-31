@@ -2,6 +2,10 @@
 import React, { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { courses } from '../../assets/data/courses'
+import './CourseDetailPage.css'
+
+const getCourseColorClass = (color) => (color === '#1a4a7a' ? 'cdp-player--blue' : 'cdp-player--dark')
+const getSideBannerColorClass = (color) => (color === '#1a4a7a' ? 'cdp-side-card__banner--blue' : 'cdp-side-card__banner--dark')
 
 // ── Mock topics per course (replace with real data later) ──────────────────
 const generateTopics = () => [
@@ -87,7 +91,7 @@ const VideoPlayer = ({ topic, unlocked, onRequestUnlock, courseColor }) => {
   if (!topic) {
     return (
       <div className="cdp-player cdp-player--empty">
-        <span style={{ fontSize: 56 }}>🎬</span>
+        <span className="cdp-player__empty-emoji">🎬</span>
         <p className="cdp-player__empty-text">Select a video to start watching</p>
       </div>
     )
@@ -95,9 +99,9 @@ const VideoPlayer = ({ topic, unlocked, onRequestUnlock, courseColor }) => {
 
   if (!topic.free && !unlocked) {
     return (
-      <div className="cdp-player cdp-player--locked" style={{ background: courseColor || '#042a4e' }}>
+      <div className={`cdp-player cdp-player--locked ${getCourseColorClass(courseColor)}`}>
         <div className="cdp-player__lock-circle">🔒</div>
-        <div style={{ textAlign: 'center' }}>
+        <div className="cdp-player__locked-content">
           <p className="cdp-player__locked-title">{topic.title}</p>
           <p className="cdp-player__locked-sub">This video requires a valid access code.</p>
           <button className="cdp-player__unlock-btn" onClick={() => onRequestUnlock(topic)}>
@@ -110,7 +114,7 @@ const VideoPlayer = ({ topic, unlocked, onRequestUnlock, courseColor }) => {
 
   // Playing state — swap with real <video> or <iframe> later
   return (
-    <div className="cdp-player cdp-player--playing" style={{ background: courseColor || '#042a4e' }}>
+    <div className={`cdp-player cdp-player--playing ${getCourseColorClass(courseColor)}`}>
       <div className="cdp-player__play-ring">▶</div>
       <p className="cdp-player__now-playing">Now Playing</p>
       <p className="cdp-player__playing-title">{topic.title}</p>
@@ -133,8 +137,8 @@ const CourseDetailPage = () => {
   if (!course) {
     return (
       <div className="cdp-not-found">
-        <p style={{ fontSize: 48, marginBottom: 16 }}>📭</p>
-        <p style={{ fontSize: 20, fontWeight: 700, color: '#042a4e' }}>Course not found.</p>
+        <p className="cdp-not-found__emoji">📭</p>
+        <p className="cdp-not-found__text">Course not found.</p>
         <button className="cdp-not-found__btn" onClick={() => navigate('/courses')}>
           ← Back to Courses
         </button>
@@ -159,6 +163,7 @@ const CourseDetailPage = () => {
   }
 
   const completedCount = topics.filter(t => isTopicUnlocked(t)).length
+  const progressClass = `cdp-progress__fill--${completedCount}`
 
   return (
     <div className="cdp-page">
@@ -214,10 +219,7 @@ const CourseDetailPage = () => {
               <span className="cdp-progress__label">{completedCount} / {topics.length} unlocked</span>
             </div>
             <div className="cdp-progress__track">
-              <div
-                className="cdp-progress__fill"
-                style={{ width: `${(completedCount / topics.length) * 100}%` }}
-              />
+              <div className={`cdp-progress__fill ${progressClass}`} />
             </div>
           </div>
         </div>
@@ -227,7 +229,7 @@ const CourseDetailPage = () => {
 
           {/* Course card */}
           <div className="cdp-side-card">
-            <div className="cdp-side-card__banner" style={{ background: course.color }}>
+            <div className={`cdp-side-card__banner ${getSideBannerColorClass(course.color)}`}>
               <span className="cdp-side-card__category">{course.category}</span>
               <span className="cdp-side-card__price">{course.price}</span>
             </div>

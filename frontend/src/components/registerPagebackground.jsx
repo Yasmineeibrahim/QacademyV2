@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import "./registerPagebackground.css";
 
 const BeamGridBackground = ({
     gridSize = 40,
@@ -20,11 +21,13 @@ const BeamGridBackground = ({
     showFade = true,
     fadeIntensity = 20,
     className,
+    style,
     children,
     ...props
 }) => {
     const canvasRef = useRef(null);
     const containerRef = useRef(null);
+    const fadeRef = useRef(null);
     const bgCanvasRef = useRef(null); // Buffer for static grid
     const [isDarkMode, setIsDarkMode] = useState(false);
     const mouseRef = useRef({ x: 0, y: 0 });
@@ -47,6 +50,23 @@ const BeamGridBackground = ({
     }, []);
 
     // --- Drawing Logic ---
+    useEffect(() => {
+        if (!containerRef.current) return;
+
+        if (style) {
+            Object.entries(style).forEach(([key, value]) => {
+                containerRef.current.style[key] = value;
+            });
+        }
+    }, [style]);
+
+    useEffect(() => {
+        if (!fadeRef.current) return;
+        const mask = `radial-gradient(ellipse at center, transparent ${fadeIntensity}%, black)`;
+        fadeRef.current.style.maskImage = mask;
+        fadeRef.current.style.WebkitMaskImage = mask;
+    }, [fadeIntensity]);
+
     useEffect(() => {
         const canvas = canvasRef.current;
         const container = containerRef.current;
@@ -231,33 +251,21 @@ const BeamGridBackground = ({
     return (
         <div
             ref={containerRef}
-            className={`relative ${className || ""}`}
+            className={`beam-grid ${asBackground ? "beam-grid--absolute" : "beam-grid--relative"} ${className || ""}`}
             {...props}
-            style={{
-                position: asBackground ? "absolute" : "relative",
-                top: asBackground ? 0 : undefined,
-                left: asBackground ? 0 : undefined,
-                width: "100%",
-                height: "100%",
-                overflow: "hidden",
-                ...(props.style || {}),
-            }}
         >
             <canvas
                 ref={canvasRef}
-                className="absolute top-0 left-0 w-full h-full z-0 pointer-events-none"
+                className="beam-grid__canvas"
             />
             {showFade && (
                 <div
-                    className="pointer-events-none absolute inset-0 bg-white dark:bg-black"
-                    style={{
-                        maskImage: `radial-gradient(ellipse at center, transparent ${fadeIntensity}%, black)`,
-                        WebkitMaskImage: `radial-gradient(ellipse at center, transparent ${fadeIntensity}%, black)`,
-                    }}
+                    ref={fadeRef}
+                    className="beam-grid__fade"
                 />
             )}
             {!asBackground && (
-                <div className="relative z-0 w-full h-full">{children}</div>
+                <div className="beam-grid__content">{children}</div>
             )}
         </div>
     );

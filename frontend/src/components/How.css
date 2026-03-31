@@ -1,0 +1,72 @@
+.how {
+  width: 100%;
+  padding: 80px 0;
+  background: #edf2f4;
+}
+
+.how__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+.how__header {
+  text-align: center;
+}
+
+.how__badge {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #fff613;
+  background: #042a4e;
+  padding: 4px 14px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 14px;
+}
+
+.how__title {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 2.4rem;
+  color: #042a4e;
+  line-height: 1.15;
+}
+
+.how__subtitle {
+  color: rgba(4, 42, 78, 0.55);
+  margin-top: 10px;
+  font-size: 15px;
+  max-width: 480px;
+}
+
+.how__frame {
+  background: #042a4e;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 12px 48px rgba(4, 42, 78, 0.25);
+}
+
+.how__bezel {
+  background: rgba(255, 246, 19, 0.08);
+  border: 1.5px solid rgba(255, 246, 19, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.how__video {
+  display: block;
+  width: 720px;
+  height: 405px;
+}
+
+@media (max-width: 1024px) {
+  .how__video {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16/9;
+  }
+}

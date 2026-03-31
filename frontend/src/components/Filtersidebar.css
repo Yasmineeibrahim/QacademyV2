@@ -1,0 +1,59 @@
+.filter-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid rgba(4, 42, 78, 0.09);
+  box-shadow: 0 4px 20px rgba(4, 42, 78, 0.07);
+  padding: 24px 20px;
+  position: sticky;
+  top: 88px;
+}
+
+.filter-sidebar__title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #042a4e;
+  margin-bottom: 12px;
+}
+
+.filter-sidebar__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-sidebar__list--spaced {
+  margin-bottom: 28px;
+}
+
+.filter-sidebar__btn {
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 7px;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  background: transparent;
+  color: rgba(4, 42, 78, 0.7);
+  transition: background 0.18s, color 0.18s;
+}
+
+.filter-sidebar__btn--active {
+  font-weight: 700;
+  background: #042a4e;
+  color: #fff613;
+}
+
+@media (max-width: 768px) {
+  .filter-sidebar {
+    position: static;
+    width: 100%;
+  }
+}

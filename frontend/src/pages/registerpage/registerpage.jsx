@@ -1,5 +1,5 @@
 import React from 'react'
-import BeamGridBackground from '../../components/registerPage'
+import BeamGridBackground from '../../components/registerPagebackground'
 import './registerpage.css'
 import { useState } from "react";
 import axios from "axios";

@@ -1,0 +1,141 @@
+.course-card {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(4, 42, 78, 0.1);
+  background: #ffffff;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border: 1px solid rgba(4, 42, 78, 0.08);
+}
+
+.course-card:hover,
+.course-card--hovered {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 36px rgba(4, 42, 78, 0.18);
+}
+
+.course-card__banner {
+  height: 120px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+}
+
+.course-card__banner--dark {
+  background: #042a4e;
+}
+
+.course-card__banner--blue {
+  background: #1a4a7a;
+}
+
+.course-card__category {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.15);
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.course-card__price {
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff613;
+  font-family: 'Archivo Black', sans-serif;
+}
+
+.course-card__body {
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.course-card__title {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1rem;
+  color: #042a4e;
+  line-height: 1.35;
+}
+
+.course-card__stats {
+  display: flex;
+  gap: 16px;
+}
+
+.course-card__stat {
+  font-size: 12px;
+  color: rgba(4, 42, 78, 0.55);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-icon {
+  font-size: 13px;
+}
+
+.course-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 6px;
+  border-top: 1px solid rgba(4, 42, 78, 0.07);
+}
+
+.course-card__instructor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.instructor-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #042a4e;
+  color: #fff613;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.instructor-name {
+  font-size: 12px;
+  color: rgba(4, 42, 78, 0.65);
+  font-weight: 500;
+  max-width: 110px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.enroll-btn {
+  background: #042a4e;
+  color: white;
+  border: none;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.enroll-btn:hover {
+  background: #fff613;
+  color: #042a4e;
+  box-shadow: 0 0 12px rgba(255, 246, 19, 0.5);
+}

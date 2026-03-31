@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import logo from '../assets/logos/elongated_logo-removebg-preview.png'
 import { useLocation, useNavigate } from 'react-router-dom'
+import './navbar.css'
 
 export const Navbar = () => {
   const navigate = useNavigate()
@@ -97,7 +98,7 @@ export const Navbar = () => {
               aria-label="Profile menu"
             >
               <span className="profile-avatar">{initials}</span>
-              <span className="profile-chevron" style={{ transform: dropdownOpen ? 'rotate(180deg)' : 'none' }}>▾</span>
+              <span className={`profile-chevron ${dropdownOpen ? 'profile-chevron--open' : ''}`}>▾</span>
             </button>
 
             {dropdownOpen && (
@@ -150,7 +151,7 @@ export const Navbar = () => {
             <>
               <button onClick={() => { navigate('/profile');    setMenuOpen(false) }}>👤 Profile</button>
               <button onClick={() => { navigate('/my-courses'); setMenuOpen(false) }}>📚 My Courses</button>
-              <button onClick={handleLogout} style={{ color: '#e53e3e' }}>🚪 Logout</button>
+              <button className="mobile-menu__logout" onClick={handleLogout}>🚪 Logout</button>
             </>
           ) : (
             <>

@@ -1,46 +1,32 @@
 // src/components/footer.jsx
 import React from 'react'
 import logo from '../assets/logos/elongated_logo-removebg-preview.png'
+import './footer.css'
 
 const Footer = () => {
   return (
-    <footer style={{
-      background: '#EDF2F4',
-      width: '100%',
-      padding: '56px 0 32px',
-    }}>
+    <footer className="footer">
       <div className="container">
 
         {/* Main row */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          flexWrap: 'wrap',
-          gap: '48px',
-        }}>
+        <div className="footer__main">
 
           {/* ── LEFT: Logo ── */}
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div className="footer__logo-wrap">
             <img
+              className="footer__logo"
               src={logo}
               alt="QAcademy Logo"
-              style={{ width: '180px', height: 'auto' }}
             />
           </div>
 
           {/* ── MIDDLE: Contact Us ── */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', alignItems: 'center' }}>
+          <div className="footer__col footer__col--center">
 
             {/* Heading */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-              <p style={{
-                fontFamily: "'Archivo Black', sans-serif",
-                fontSize: '1.35rem',
-                color: '#042a4e',
-                letterSpacing: '0.5px',
-              }}>Contact Us</p>
-              <div style={{ width: '40px', height: '3px', borderRadius: '2px', background: '#fff613' }} />
+            <div className="footer__heading-wrap footer__heading-wrap--center">
+              <p className="footer__heading">Contact Us</p>
+              <div className="footer__heading-line" />
             </div>
 
             {/* Email */}
@@ -51,43 +37,36 @@ const Footer = () => {
           </div>
 
           {/* ── RIGHT: Follow Us ── */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'flex-start' }}>
+          <div className="footer__col footer__col--left">
 
             {/* Heading */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <p style={{
-                fontFamily: "'Archivo Black', sans-serif",
-                fontSize: '1.35rem',
-                color: '#042a4e',
-                letterSpacing: '0.5px',
-              }}>Follow Us</p>
-              <div style={{ width: '40px', height: '3px', borderRadius: '2px', background: '#fff613' }} />
+            <div className="footer__heading-wrap">
+              <p className="footer__heading">Follow Us</p>
+              <div className="footer__heading-line" />
             </div>
 
             {/* Icons row */}
-            <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+            <div className="footer__icons">
 
-              <SocialLink href="https://www.facebook.com" label="Facebook"
-                color="#1877F2" gradient="linear-gradient(135deg,#1877F2,#0a5dc2)">
+              <SocialLink href="https://www.facebook.com" label="Facebook" variant="facebook">
                 <FacebookIcon />
               </SocialLink>
 
               <SocialLink
                 href="https://www.instagram.com/qacademyy?igsh=MXRocHBjMmVmYnAybA=="
-                label="Instagram" color="#E1306C"
-                gradient="linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)">
+                label="Instagram"
+                variant="instagram">
                 <InstagramIcon />
               </SocialLink>
 
               <SocialLink
                 href="https://www.tiktok.com/@qacademyy?_r=1&_t=ZS-94tiOrXNPfA"
-                label="TikTok" color="#010101"
-                gradient="linear-gradient(135deg,#010101,#69C9D0)">
+                label="TikTok"
+                variant="tiktok">
                 <TikTokIcon />
               </SocialLink>
 
-              <SocialLink href="https://wa.me/201010659462" label="WhatsApp"
-                color="#25D366" gradient="linear-gradient(135deg,#25D366,#128C7E)">
+              <SocialLink href="https://wa.me/201010659462" label="WhatsApp" variant="whatsapp">
                 <WhatsAppIcon />
               </SocialLink>
 
@@ -97,19 +76,10 @@ const Footer = () => {
         </div>
 
         {/* Divider */}
-        <div style={{
-          height: '1px',
-          background: 'rgba(4,42,78,0.18)',
-          margin: '40px 0 22px',
-        }} />
+        <div className="footer__divider" />
 
         {/* Bottom bar */}
-        <p style={{
-          textAlign: 'center',
-          fontSize: '13px',
-          color: 'rgba(4,42,78,0.55)',
-          fontWeight: 500,
-        }}>
+        <p className="footer__copyright">
           © {new Date().getFullYear()} QAcademy. All rights reserved.
         </p>
 
@@ -124,28 +94,18 @@ const ContactItem = ({ href, icon, text }) => {
   return (
     <a
       href={href}
-      style={{
-        display: 'flex', alignItems: 'center', gap: '12px',
-        textDecoration: 'none',
-        background: hovered ? 'rgba(4,42,78,0.07)' : 'rgba(255,255,255,0.45)',
-        border: '1.5px solid rgba(4,42,78,0.1)',
-        borderRadius: '10px',
-        padding: '10px 18px',
-        transition: 'all 0.25s ease',
-        transform: hovered ? 'translateY(-2px)' : 'none',
-        boxShadow: hovered ? '0 6px 18px rgba(4,42,78,0.12)' : '0 1px 4px rgba(4,42,78,0.06)',
-      }}
+      className={`footer-contact ${hovered ? 'footer-contact--hovered' : 'footer-contact--idle'}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <span style={{ color: '#042a4e', display: 'flex' }}>{icon}</span>
-      <span style={{ color: '#042a4e', fontSize: '14px', fontWeight: 600 }}>{text}</span>
+      <span className="footer-contact__icon">{icon}</span>
+      <span className="footer-contact__text">{text}</span>
     </a>
   )
 }
 
 /* ── Circular social icon button ── */
-const SocialLink = ({ href, label, color, gradient, children }) => {
+const SocialLink = ({ href, label, variant, children }) => {
   const [hovered, setHovered] = React.useState(false)
   return (
     <a
@@ -155,21 +115,7 @@ const SocialLink = ({ href, label, color, gradient, children }) => {
       aria-label={label}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      style={{
-        width: '54px', height: '54px',
-        borderRadius: '50%',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: hovered ? gradient : '#ffffff',
-        color: hovered ? '#ffffff' : color,
-        transition: 'all 0.3s ease',
-        transform: hovered ? 'translateY(-5px) scale(1.1)' : 'scale(1)',
-        boxShadow: hovered
-          ? `0 12px 32px ${color}66, 0 4px 14px ${color}44`
-          : '0 2px 10px rgba(4,42,78,0.15)',
-        textDecoration: 'none',
-        border: hovered ? `2px solid ${color}` : '2px solid rgba(4,42,78,0.12)',
-        flexShrink: 0,
-      }}
+      className={`footer-social footer-social--${variant} ${hovered ? 'footer-social--hovered' : ''}`}
     >
       {children}
     </a>

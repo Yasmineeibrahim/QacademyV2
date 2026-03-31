@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { courses } from '../assets/data/courses'
 import CourseCard from './Coursecard'
+import './coursesection.css'
 
 function getVisible() {
   if (typeof window === 'undefined') return 4
@@ -45,7 +46,7 @@ const CoursesSection = () => {
             aria-label="Previous"
           >‹</button>
 
-          <div className="courses-track" style={{ '--cols': visible }}>
+          <div className={`courses-track courses-track--cols-${visible}`}>
             {visibleCourses.map(course => (
               <CourseCard key={course.id} course={course} />
             ))}

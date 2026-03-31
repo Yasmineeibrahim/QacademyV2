@@ -1,6 +1,9 @@
 // src/components/CourseCard.jsx
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import './Coursecard.css'
+
+const getCourseColorClass = (color) => (color === '#1a4a7a' ? 'course-card__banner--blue' : 'course-card__banner--dark')
 
 const CourseCard = ({ course }) => {
   const [hovered, setHovered] = useState(false)
@@ -8,15 +11,11 @@ const CourseCard = ({ course }) => {
 
   return (
     <div
-      className="course-card"
+      className={`course-card ${hovered ? 'course-card--hovered' : ''}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      style={{
-        transform: hovered ? 'translateY(-6px)' : 'none',
-        transition: 'transform 0.25s ease, box-shadow 0.25s ease',
-      }}
     >
-      <div className="course-card__banner" style={{ background: course.color }}>
+      <div className={`course-card__banner ${getCourseColorClass(course.color)}`}>
         <span className="course-card__category">{course.category}</span>
         <span className="course-card__price">{course.price}</span>
       </div>

@@ -7,6 +7,7 @@ import icon5 from '../assets/hero/20.png'
 import icon7 from '../assets/hero/22.png'
 import icon8 from '../assets/hero/23.png'
 import HowItWorks from './How';
+import './hero.css'
 const Hero = () => {
   return (
     <div

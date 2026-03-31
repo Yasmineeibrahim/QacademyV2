@@ -1,0 +1,39 @@
+.beam-grid {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.beam-grid--absolute {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.beam-grid--relative {
+  position: relative;
+}
+
+.beam-grid__canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.beam-grid__fade {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+}
+
+.beam-grid__content {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+}

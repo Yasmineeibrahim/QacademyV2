@@ -8,6 +8,7 @@ const hexToRgb = (hex) => {
   const b = Number.parseInt(normalized.slice(4, 6), 16);
   return `${r}, ${g}, ${b}`;
 };
+import './heroBackground.css'
 
 const SmoothWavyCanvas = ({
   backgroundColor = '#F8F6F0',
@@ -17,6 +18,7 @@ const SmoothWavyCanvas = ({
   lineOpacity = 1,
   animationSpeed = 0.004,
 }) => {
+  const containerRef = useRef(null)
   const canvasRef = useRef(null);
   const requestIdRef = useRef(null);
   const timeRef = useRef(0);
@@ -230,6 +232,12 @@ const SmoothWavyCanvas = ({
     animationSpeed,
   ]);
   useEffect(() => {
+    if (!containerRef.current) return
+    containerRef.current.style.backgroundColor =
+      backgroundColor === 'transparent' ? 'transparent' : backgroundColor
+  }, [backgroundColor])
+
+  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     resizeCanvas();
@@ -254,23 +262,12 @@ const SmoothWavyCanvas = ({
   }, [animate, resizeCanvas, handleMouseMove, handleMouseDown, handleMouseUp]);
   return (
     <div
-      style={{
-        position: 'absolute',
-        inset: 0,
-        width: '100%',
-        height: '100%',
-        overflow: 'hidden',
-        backgroundColor:
-          backgroundColor === 'transparent' ? 'transparent' : backgroundColor,
-        zIndex: 0,
-      }}>
+      className="smooth-wavy"
+      ref={containerRef}
+      data-bg={backgroundColor === 'transparent' ? 'transparent' : 'solid'}>
       <canvas
         ref={canvasRef}
-        style={{
-          display: 'block',
-          width: '100%',
-          height: '100%',
-        }}
+        className="smooth-wavy__canvas"
       />
     </div>
   );

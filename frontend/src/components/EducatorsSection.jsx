@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { educators  } from '../assets/data/educators'
 import EducatorCard from './Educatorcard'
+import './EducatorsSection.css'
 
 function getVisible() {
   if (typeof window === 'undefined') return 4
@@ -30,31 +31,20 @@ const EducatorsSection = () => {
   const visibleCards = educators.slice(index, index + visible)
 
   return (
-    <section style={{ width: '100%', padding: '40px 0', background: '#ffffff' }}>
+    <section className="educators-section">
       <div className="container">
 
         {/* Header */}
-        <div style={{
-          display: 'flex', flexDirection: 'column', alignItems: 'center',
-          textAlign: 'center', marginBottom: '32px', gap: '6px',
-        }}>
-          <span style={{
-            fontSize: '12px', fontWeight: 700, letterSpacing: '2.5px',
-            textTransform: 'uppercase', color: '#fff613',
-            background: '#042a4e', padding: '4px 14px',
-            borderRadius: '4px', display: 'inline-block',
-          }}>Our Team</span>
-          <h2 style={{
-            fontFamily: "'Archivo Black', sans-serif",
-            fontSize: '2.4rem', color: '#042a4e', lineHeight: 1.15,
-          }}>Meet Your Educators</h2>
-          <p style={{ color: 'rgba(4,42,78,0.5)', fontSize: '15px', maxWidth: '460px', marginTop: '4px' }}>
+        <div className="educators-section__header">
+          <span className="educators-section__badge">Our Team</span>
+          <h2 className="educators-section__title">Meet Your Educators</h2>
+          <p className="educators-section__subtitle">
             Expert instructors who've spent years turning hard engineering concepts into clear, practical knowledge.
           </p>
         </div>
 
         {/* Slider */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div className="educators-section__slider">
 
           <button
             onClick={prev}
@@ -62,11 +52,7 @@ const EducatorsSection = () => {
             aria-label="Previous"
           >‹</button>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: `repeat(${visible}, 1fr)`,
-            gap: '24px', flex: 1, minWidth: 0,
-          }}>
+          <div className={`educators-section__grid educators-section__grid--cols-${visible}`}>
             {visibleCards.map(edu => (
               <EducatorCard key={edu.id} educator={edu} />
             ))}
@@ -81,7 +67,7 @@ const EducatorsSection = () => {
         </div>
 
         {/* Dots */}
-        <div className="courses-dots" style={{ marginTop: '32px' }}>
+        <div className="courses-dots educators-section__dots">
           {Array.from({ length: maxIndex + 1 }).map((_, i) => (
             <button
               key={i}

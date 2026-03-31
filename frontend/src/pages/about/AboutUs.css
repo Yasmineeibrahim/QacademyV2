@@ -3,9 +3,48 @@
 ══════════════════════════════════════════════ */
 
 /* ── Shared ── */
+.au-page {
+  background: #ffffff;
+  overflow-x: hidden;
+}
+
 .container {
   max-width: 1100px;
   margin: 0 auto;
+}
+
+.au-fade {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.au-fade--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.au-fade--d0 {
+  transition: opacity 0.7s ease 0s, transform 0.7s ease 0s;
+}
+
+.au-fade--d08 {
+  transition: opacity 0.7s ease 0.08s, transform 0.7s ease 0.08s;
+}
+
+.au-fade--d12 {
+  transition: opacity 0.7s ease 0.12s, transform 0.7s ease 0.12s;
+}
+
+.au-fade--d15 {
+  transition: opacity 0.7s ease 0.15s, transform 0.7s ease 0.15s;
+}
+
+.au-fade--d16 {
+  transition: opacity 0.7s ease 0.16s, transform 0.7s ease 0.16s;
+}
+
+.au-fade--d24 {
+  transition: opacity 0.7s ease 0.24s, transform 0.7s ease 0.24s;
 }
 
 /* ── Badge ── */
@@ -62,6 +101,21 @@
   left: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;
+}
+
+.au-hero__ring--300 {
+  width: 300px;
+  height: 300px;
+}
+
+.au-hero__ring--500 {
+  width: 500px;
+  height: 500px;
+}
+
+.au-hero__ring--700 {
+  width: 700px;
+  height: 700px;
 }
 
 .au-hero h1 {
