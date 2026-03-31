@@ -30,7 +30,7 @@ const CoursesPage = () => {
         subtitle={`${courses.length} courses across all semesters & majors`}
       />
 
-      <div className="container courses-page__layout">
+      <div className="courses-page__layout">
 
         <FilterSidebar
           semester={semester}
