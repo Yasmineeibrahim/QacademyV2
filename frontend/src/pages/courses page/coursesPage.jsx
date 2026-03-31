@@ -1,6 +1,6 @@
 // src/pages/CoursesPage.jsx
 import React, { useState } from 'react'
-import { courses }   from '../../assets/data/courses'
+import { courses, SEMESTERS, MAJORS }   from '../../assets/data/courses'
 import CourseCard    from '../../components/Coursecard'
 import PageHeader    from '../../components/Pageheader'
 import SearchBar     from '../../components/Searchbar'
@@ -32,14 +32,50 @@ const CoursesPage = () => {
 
       <div className="courses-page__layout">
 
-        <FilterSidebar
-          semester={semester}
-          major={major}
-          onSemesterChange={setSemester}
-          onMajorChange={setMajor}
-        />
+        <div className="courses-page__sidebar">
+          <FilterSidebar
+            semester={semester}
+            major={major}
+            onSemesterChange={setSemester}
+            onMajorChange={setMajor}
+          />
+        </div>
 
         <main className="courses-page__main">
+
+          <div className="courses-page__mobile-filters">
+            <div className="courses-page__mobile-filter">
+              <label className="courses-page__mobile-label" htmlFor="semester-filter">Semester</label>
+              <select
+                id="semester-filter"
+                className="courses-page__mobile-select"
+                value={semester === null ? 'all' : String(semester)}
+                onChange={(e) => {
+                  const value = e.target.value
+                  setSemester(value === 'all' ? null : Number(value))
+                }}
+              >
+                <option value="all">All Semesters</option>
+                {SEMESTERS.map((s) => (
+                  <option key={s} value={String(s)}>Semester {s}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="courses-page__mobile-filter">
+              <label className="courses-page__mobile-label" htmlFor="major-filter">Major</label>
+              <select
+                id="major-filter"
+                className="courses-page__mobile-select"
+                value={major}
+                onChange={(e) => setMajor(e.target.value)}
+              >
+                {MAJORS.map((m) => (
+                  <option key={m} value={m}>{m === 'All' ? 'All Majors' : `${m} Eng.`}</option>
+                ))}
+              </select>
+            </div>
+          </div>
 
           <div className="courses-page__search">
             <SearchBar
