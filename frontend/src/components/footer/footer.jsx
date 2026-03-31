@@ -1,6 +1,6 @@
 // src/components/footer.jsx
 import React from 'react'
-import logo from '../assets/logos/elongated_logo-removebg-preview.png'
+import logo from '../../assets/logos/elongated_logo-removebg-preview.png'
 import './footer.css'
 
 const Footer = () => {
