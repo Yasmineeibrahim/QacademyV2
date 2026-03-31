@@ -32,7 +32,7 @@ const registerpage = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/students",
+        "http://loving-essex-builder-allocated.trycloudflare.com/api/students",
         payload
       );
 
