@@ -77,6 +77,10 @@
   grid-template-columns: repeat(2, 1fr);
 }
 
+.courses-track--cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
 .courses-track--cols-4 {
   grid-template-columns: repeat(4, 1fr);
 }

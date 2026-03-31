@@ -5,10 +5,10 @@ import CourseCard from './Coursecard'
 import './coursesection.css'
 
 function getVisible() {
-  if (typeof window === 'undefined') return 4
+  if (typeof window === 'undefined') return 3
   if (window.innerWidth < 640)  return 1
   if (window.innerWidth < 1024) return 2
-  return 4
+  return 3
 }
 
 const CoursesSection = () => {

@@ -51,7 +51,7 @@
 }
 
 .course-card__body {
-  padding: 20px 18px;
+  padding: 30px 18px;
   display: flex;
   flex-direction: column;
   gap: 14px;
