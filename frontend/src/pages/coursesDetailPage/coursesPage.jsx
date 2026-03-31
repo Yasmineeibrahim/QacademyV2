@@ -1,10 +1,10 @@
 // src/pages/CoursesPage.jsx
 import React, { useState } from 'react'
 import { courses, SEMESTERS, MAJORS }   from '../../assets/data/courses'
-import CourseCard    from '../../components/Coursecard'
-import PageHeader    from '../../components/Pageheader'
-import SearchBar     from '../../components/Searchbar'
-import FilterSidebar from '../../components/Filtersidebar'
+import CourseCard    from '../../components/coursecard/Coursecard'
+import PageHeader    from '../../components/pageheader/Pageheader'
+import SearchBar     from '../../components/searchBar/Searchbar'
+import FilterSidebar from '../../components/sidebar/Filtersidebar'
 import './coursesPage.css'
 
 const CoursesPage = () => {

@@ -20,7 +20,7 @@ const loginPage = () => {
 
   const loginService = async (data) => {
     return await axios.post(
-      "https://mary-care-irrigation-literacy.trycloudflare.com/api/students/login",
+      "https://street-helena-oakland-mistakes.trycloudflare.com/api/students/login",
       data
     );
   };

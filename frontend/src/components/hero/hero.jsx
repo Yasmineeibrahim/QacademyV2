@@ -1,12 +1,12 @@
 import React from 'react'
-import SmoothWavyCanvas from './heroBackground'
+import SmoothWavyCanvas from '../heroBackground'
 import icon1 from '../assets/hero/16.png'
 import icon2 from '../assets/hero/17.png'
 import icon4 from '../assets/hero/19.png'
 import icon5 from '../assets/hero/20.png'
 import icon7 from '../assets/hero/22.png'
 import icon8 from '../assets/hero/23.png'
-import HowItWorks from './How';
+import HowItWorks from '../How';
 import './hero.css'
 const Hero = () => {
   return (

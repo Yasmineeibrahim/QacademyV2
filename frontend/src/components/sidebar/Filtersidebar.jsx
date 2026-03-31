@@ -1,6 +1,6 @@
 // src/components/FilterSidebar.jsx
 import React from 'react'
-import { SEMESTERS, MAJORS } from '../assets/data/courses'
+import { SEMESTERS, MAJORS } from '../../assets/data/courses'
 import './Filtersidebar.css'
 
 const FilterSidebar = ({ semester, major, onSemesterChange, onMajorChange }) => {

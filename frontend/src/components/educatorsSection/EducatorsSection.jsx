@@ -1,7 +1,7 @@
 // src/components/EducatorsSection.jsx
 import React, { useState, useEffect } from 'react'
-import { educators  } from '../assets/data/educators'
-import EducatorCard from './Educatorcard'
+import { educators  } from '../../assets/data/educators'
+import EducatorCard from '../educatorcard/Educatorcard'
 import './EducatorsSection.css'
 
 function getVisible() {

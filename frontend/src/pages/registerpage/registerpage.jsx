@@ -1,5 +1,5 @@
 import React from 'react'
-import BeamGridBackground from '../../components/registerPagebackground'
+import BeamGridBackground from '../../components/registerBackground/registerPagebackground'
 import './registerpage.css'
 import { useState } from "react";
 import axios from "axios";
@@ -32,7 +32,7 @@ const registerpage = () => {
 
     try {
       const res = await axios.post(
-        "https://mary-care-irrigation-literacy.trycloudflare.com/api/students",
+        "https://street-helena-oakland-mistakes.trycloudflare.com/api/students",
         payload
       );
 

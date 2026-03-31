@@ -1,7 +1,7 @@
 // src/components/coursesection.jsx
 import React, { useState, useEffect } from 'react'
-import { courses } from '../assets/data/courses'
-import CourseCard from './Coursecard'
+import { courses } from '../../assets/data/courses'
+import CourseCard from '../coursecard/Coursecard'
 import './coursesection.css'
 
 function getVisible() {

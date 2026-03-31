@@ -1,5 +1,5 @@
 import React from 'react'
-import EducatorsSection from './EducatorsSection'
+import EducatorsSection from '../EducatorsSection'
 
 const Educators = () => {
   return <EducatorsSection />
