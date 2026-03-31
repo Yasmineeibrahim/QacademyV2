@@ -66,6 +66,10 @@ export const Navbar = () => {
 
   // Derive initials for avatar
   const displayName = user?.name || user?.first_name || user?.email
+  const userRole = String(user?.role || '').trim().toLowerCase()
+  const isStudent = userRole === 'student'
+  const isEducator = userRole === 'educator'
+  const isAdmin = userRole === 'admin' || userRole === 'administrator'
 
   const initials = user?.name
     ? user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
@@ -74,6 +78,30 @@ export const Navbar = () => {
     : user?.email
       ? user.email[0].toUpperCase()
       : '?'
+
+  const menuItems = []
+
+  if (isStudent) {
+    menuItems.push({ icon: '👤', label: 'Profile', path: '/profile' })
+    menuItems.push({ icon: '📚', label: 'My Courses', path: '/my-courses' })
+  }
+
+  if (isEducator) {
+    menuItems.push({ icon: '👤', label: 'Profile', path: '/profile' })
+    menuItems.push({ icon: '📚', label: 'My Courses', path: '/my-courses' })
+    menuItems.push({ icon: '📈', label: 'My Analytics', path: '/my-analytics' })
+  }
+
+  if (isAdmin) {
+    menuItems.push({ icon: '📈', label: 'My Analytics', path: '/my-analytics' })
+    menuItems.push({ icon: '👤', label: 'Profile', path: '/profile' })
+    menuItems.push({ icon: '🛠️', label: 'Control Nexus', path: '/control-nexus' })
+  }
+
+  if (!menuItems.length) {
+    menuItems.push({ icon: '👤', label: 'Profile', path: '/profile' })
+    menuItems.push({ icon: '📚', label: 'My Courses', path: '/my-courses' })
+  }
 
   return (
     <nav className={`navbar ${isScrolled ? 'navbar-scrolled' : ''} ${isLoginPage ? 'navbar-login' : ''}`}>
@@ -108,12 +136,15 @@ export const Navbar = () => {
                   {user.name && <span className="profile-dropdown__email">{user.email}</span>}
                 </div>
                 <div className="profile-dropdown__divider" />
-                <button className="profile-dropdown__item" onClick={() => { navigate('/profile'); setDropdownOpen(false) }}>
-                  <span>👤</span> Profile
-                </button>
-                <button className="profile-dropdown__item" onClick={() => { navigate('/my-courses'); setDropdownOpen(false) }}>
-                  <span>📚</span> My Courses
-                </button>
+                {menuItems.map((item) => (
+                  <button
+                    key={item.path}
+                    className="profile-dropdown__item"
+                    onClick={() => { navigate(item.path); setDropdownOpen(false) }}
+                  >
+                    <span>{item.icon}</span> {item.label}
+                  </button>
+                ))}
                 <div className="profile-dropdown__divider" />
                 <button className="profile-dropdown__item profile-dropdown__item--danger" onClick={handleLogout}>
                   <span>🚪</span> Logout
@@ -149,8 +180,11 @@ export const Navbar = () => {
           <div className="mobile-menu__divider" />
           {user ? (
             <>
-              <button onClick={() => { navigate('/profile');    setMenuOpen(false) }}>👤 Profile</button>
-              <button onClick={() => { navigate('/my-courses'); setMenuOpen(false) }}>📚 My Courses</button>
+              {menuItems.map((item) => (
+                <button key={item.path} onClick={() => { navigate(item.path); setMenuOpen(false) }}>
+                  {item.icon} {item.label}
+                </button>
+              ))}
               <button className="mobile-menu__logout" onClick={handleLogout}>🚪 Logout</button>
             </>
           ) : (

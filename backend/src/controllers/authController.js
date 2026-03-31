@@ -20,13 +20,17 @@ export const loginAccount = (req, res) => {
       return res.status(401).json({ message: "Wrong password " });
     }
 
+    const normalizedRole = typeof user.role === "string"
+      ? user.role.trim().toLowerCase()
+      : null;
+
     return res.json({
       message: "Login successful ",
       user: {
         id: user.id,
         email: user.email,
         first_name: user.first_name,
-        role: user.role ?? null
+        role: normalizedRole
       }
     });
   });

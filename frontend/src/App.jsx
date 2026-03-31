@@ -14,6 +14,8 @@ import RegisterPage       from './pages/registerpage/registerpage'
 import AboutUs from './pages/about/AboutUs'
 import ProfilePage from './pages/profilepage/profilePage'
 import StudentCourses from './pages/studentCoursesPage/studentCourses'
+import AnalyticsPage from './pages/analyticsPage/AnalyticsPage'
+import AdminControlPage from './pages/adminControlPage/AdminControlPage'
 
 function HomePage() {
   return (
@@ -42,6 +44,8 @@ function AppContent() {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/my-courses" element={<StudentCourses />} />
+        <Route path="/my-analytics" element={<AnalyticsPage />} />
+        <Route path="/control-nexus" element={<AdminControlPage />} />
       </Routes>
       {!isAuthPage && <Footer />}
     </>
