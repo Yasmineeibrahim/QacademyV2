@@ -4,6 +4,9 @@ import './loginPage.css'
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
 const loginPage = () => {
   const navigate = useNavigate();
     const [form, setForm] = useState({
@@ -20,7 +23,7 @@ const loginPage = () => {
 
   const loginService = async (data) => {
     return await axios.post(
-      "https://street-helena-oakland-mistakes.trycloudflare.com/api/students/login",
+      `${API_BASE_URL}/api/accounts/login`,
       data
     );
   };

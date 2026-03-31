@@ -3,6 +3,9 @@ import BeamGridBackground from '../../components/registerBackground/registerPage
 import './registerpage.css'
 import { useState } from "react";
 import axios from "axios";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
 const registerpage = () => {
    const [form, setForm] = useState({
     first_name: "",
@@ -32,7 +35,7 @@ const registerpage = () => {
 
     try {
       const res = await axios.post(
-        "https://street-helena-oakland-mistakes.trycloudflare.com/api/students",
+        `${API_BASE_URL}/api/accounts`,
         payload
       );
 

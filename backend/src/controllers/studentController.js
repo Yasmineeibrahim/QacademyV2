@@ -13,7 +13,7 @@ export const createStudent = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const sql = `
-      INSERT INTO students (first_name, last_name, email, password, phone_number)
+      INSERT INTO accounts (first_name, last_name, email, password, phone_number)
       VALUES (?, ?, ?, ?, ?)
     `;
 
@@ -39,10 +39,10 @@ export const createStudent = async (req, res) => {
   }
 };
 
-export const getStudents = (req, res) => {
+export const getaccounts = (req, res) => {
   const sql = `
     SELECT id, first_name, last_name, email, phone_number, created_at
-    FROM students
+    FROM accounts
     ORDER BY created_at DESC
   `;
 
@@ -55,7 +55,7 @@ export const getStudents = (req, res) => {
 export const loginStudent = (req, res) => {
   const { email, password } = req.body;
 
-  const sql = "SELECT * FROM students WHERE email = ?";
+  const sql = "SELECT * FROM accounts WHERE email = ?";
 
   db.query(sql, [email], async (err, result) => {
     if (err) return res.status(500).json(err);
@@ -89,15 +89,15 @@ export const getDbStatus = (req, res) => {
       return res.status(500).json({ message: "Failed to check active database" });
     }
 
-    db.query("SELECT COUNT(*) AS studentsCount FROM students", (countErr, countResult) => {
+    db.query("SELECT COUNT(*) AS accountsCount FROM accounts", (countErr, countResult) => {
       if (countErr) {
-        return res.status(500).json({ message: "Failed to read students count" });
+        return res.status(500).json({ message: "Failed to read accounts count" });
       }
 
       res.json({
         connected: true,
         database: dbResult[0]?.databaseName || null,
-        studentsCount: countResult[0]?.studentsCount || 0
+        accountsCount: countResult[0]?.accountsCount || 0
       });
     });
   });
