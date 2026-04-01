@@ -1,11 +1,10 @@
-// src/pages/StudentCoursePage.jsx
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './StudentCoursePage.css'
+import { StudentCourse, StudentCoursesAnalytics } from '../../models/courseModels'
 
-// ── Mock enrolled courses data (replace with real API data later) ──────────
 const enrolledCourses = [
-  {
+  new StudentCourse({
     id: 1,
     title: 'Calculus I – Limits & Derivatives',
     category: 'Mathematics',
@@ -18,8 +17,8 @@ const enrolledCourses = [
     semester: 1,
     status: 'active',
     lastAccessed: '2 hours ago',
-  },
-  {
+  }),
+  new StudentCourse({
     id: 2,
     title: 'Physics I – Mechanics & Motion',
     category: 'Physics',
@@ -32,8 +31,8 @@ const enrolledCourses = [
     semester: 1,
     status: 'completed',
     lastAccessed: '3 days ago',
-  },
-  {
+  }),
+  new StudentCourse({
     id: 3,
     title: 'Engineering Drawing & CAD Basics',
     category: 'Drawing',
@@ -46,8 +45,8 @@ const enrolledCourses = [
     semester: 1,
     status: 'active',
     lastAccessed: '1 day ago',
-  },
-  {
+  }),
+  new StudentCourse({
     id: 4,
     title: 'Introduction to Programming – C++',
     category: 'CS',
@@ -60,8 +59,8 @@ const enrolledCourses = [
     semester: 2,
     status: 'active',
     lastAccessed: '5 hours ago',
-  },
-  {
+  }),
+  new StudentCourse({
     id: 5,
     title: 'Electrical Circuits – DC Analysis',
     category: 'Electrical',
@@ -74,8 +73,8 @@ const enrolledCourses = [
     semester: 2,
     status: 'paused',
     lastAccessed: '2 weeks ago',
-  },
-  {
+  }),
+  new StudentCourse({
     id: 6,
     title: 'Technical English for Engineers',
     category: 'Language',
@@ -88,31 +87,8 @@ const enrolledCourses = [
     semester: 2,
     status: 'active',
     lastAccessed: '1 hour ago',
-  },
+  }),
 ]
-
-// ── Helpers ────────────────────────────────────────────────────────────────
-const getBannerClass = (color) =>
-  color === '#1a4a7a' ? 'scp-card__banner--blue' : 'scp-card__banner--dark'
-
-const getProgressFillClass = (pct) => {
-  if (pct >= 100) return 'scp-card__progress-fill--done'
-  if (pct >= 60)  return 'scp-card__progress-fill--high'
-  if (pct >= 30)  return 'scp-card__progress-fill--mid'
-  return 'scp-card__progress-fill--low'
-}
-
-const getStatusBadgeClass = (status) => {
-  if (status === 'completed') return 'scp-card__status-badge--completed'
-  if (status === 'paused')    return 'scp-card__status-badge--paused'
-  return 'scp-card__status-badge--active'
-}
-
-const getStatusLabel = (status) => {
-  if (status === 'completed') return '✓ Completed'
-  if (status === 'paused')    return '⏸ Paused'
-  return '● Active'
-}
 
 const TABS = [
   { key: 'all',       label: 'All Courses' },
@@ -127,19 +103,18 @@ const SORTS = [
   { key: 'title',    label: 'A → Z'    },
 ]
 
-// ── Enrolled Course Card ───────────────────────────────────────────────────
 const EnrolledCourseCard = ({ course }) => {
   const navigate = useNavigate()
-  const pct = Math.round((course.completedLessons / course.lessons) * 100)
+  const pct = course.getProgressPercent()
 
   return (
     <div className="scp-card">
 
       {/* Banner */}
-      <div className={`scp-card__banner ${getBannerClass(course.color)}`}>
+      <div className={`scp-card__banner ${course.getBannerClass()}`}>
         <span className="scp-card__category">{course.category}</span>
-        <span className={`scp-card__status-badge ${getStatusBadgeClass(course.status)}`}>
-          {getStatusLabel(course.status)}
+        <span className={`scp-card__status-badge ${course.getStatusBadgeClass()}`}>
+          {course.getStatusLabel()}
         </span>
       </div>
 
@@ -161,7 +136,7 @@ const EnrolledCourseCard = ({ course }) => {
         </div>
         <div className="scp-card__progress-track">
           <div
-            className={`scp-card__progress-fill ${getProgressFillClass(pct)}`}
+            className={`scp-card__progress-fill ${course.getProgressFillClass()}`}
             style={{ width: `${pct}%` }}
           />
         </div>
@@ -188,41 +163,16 @@ const EnrolledCourseCard = ({ course }) => {
   )
 }
 
-// ── Main Page ──────────────────────────────────────────────────────────────
 const StudentCoursePage = () => {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('all')
   const [activeSort, setActiveSort] = useState('recent')
 
-  // Filter by tab
-  const filtered = enrolledCourses.filter(c =>
-    activeTab === 'all' ? true : c.status === activeTab
-  )
-
-  // Sort
-  const sorted = [...filtered].sort((a, b) => {
-    if (activeSort === 'progress') {
-      const pctA = a.completedLessons / a.lessons
-      const pctB = b.completedLessons / b.lessons
-      return pctB - pctA
-    }
-    if (activeSort === 'title') return a.title.localeCompare(b.title)
-    return 0 // 'recent' — keep insertion order (replace with date sort when real data arrives)
-  })
-
-  // Stats for header
-  const totalCourses    = enrolledCourses.length
-  const completedCourses = enrolledCourses.filter(c => c.status === 'completed').length
-  const totalLessons    = enrolledCourses.reduce((s, c) => s + c.lessons, 0)
-  const unlockedLessons = enrolledCourses.reduce((s, c) => s + c.completedLessons, 0)
-  const overallPct      = Math.round((unlockedLessons / totalLessons) * 100)
-
-  const tabCounts = {
-    all:       enrolledCourses.length,
-    active:    enrolledCourses.filter(c => c.status === 'active').length,
-    completed: enrolledCourses.filter(c => c.status === 'completed').length,
-    paused:    enrolledCourses.filter(c => c.status === 'paused').length,
-  }
+  const filtered = StudentCoursesAnalytics.filterByTab(enrolledCourses, activeTab)
+  const sorted = StudentCoursesAnalytics.sortCourses(filtered, activeSort)
+  const { totalCourses, completedCourses, unlockedLessons, overallPct } =
+    StudentCoursesAnalytics.getHeaderStats(enrolledCourses)
+  const tabCounts = StudentCoursesAnalytics.getTabCounts(enrolledCourses)
 
   return (
     <div className="scp-page">

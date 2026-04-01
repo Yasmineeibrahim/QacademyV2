@@ -1,7 +1,11 @@
-// src/pages/EducatorCoursePage.jsx
 import React, { useState} from 'react'
 
 import './EducatorCoursePage.css'
+import {
+  EducatorCourse,
+  EducatorCoursesAnalytics,
+  EducatorVideoFactory,
+} from '../../models/courseModels'
 
 // ── Mock Data (replace with real API data) ─────────────────────────────────
 const EDUCATOR = {
@@ -10,19 +14,8 @@ const EDUCATOR = {
   department: 'Mathematics & Engineering Sciences',
 }
 
-const generateVideos = (courseStudents) => [
-  { id: 1, title: 'Introduction & Overview',        duration: '12:30', free: true,  students: courseStudents },
-  { id: 2, title: 'Core Concepts Explained',        duration: '18:45', free: false, students: Math.round(courseStudents * 0.82) },
-  { id: 3, title: 'Hands-on Practice Session',      duration: '24:10', free: false, students: Math.round(courseStudents * 0.74) },
-  { id: 4, title: 'Deep Dive: Advanced Techniques', duration: '31:05', free: false, students: Math.round(courseStudents * 0.61) },
-  { id: 5, title: 'Mid-Term Revision',              duration: '22:50', free: false, students: Math.round(courseStudents * 0.55) },
-  { id: 6, title: 'Common Pitfalls & How to Avoid', duration: '15:20', free: false, students: Math.round(courseStudents * 0.49) },
-  { id: 7, title: 'Project Walkthrough',            duration: '28:40', free: false, students: Math.round(courseStudents * 0.42) },
-  { id: 8, title: 'Final Revision',                duration: '10:15', free: false, students: Math.round(courseStudents * 0.38) },
-]
-
 const educatorCourses = [
-  {
+  new EducatorCourse({
     id: 1,
     title: 'Calculus I – Limits & Derivatives',
     category: 'Mathematics',
@@ -32,9 +25,9 @@ const educatorCourses = [
     duration: '4h 20m',
     students: 148,
     status: 'active',
-    videos: generateVideos(148),
-  },
-  {
+    videos: EducatorVideoFactory.createDefaultSet(148),
+  }),
+  new EducatorCourse({
     id: 2,
     title: 'Calculus II – Integration Techniques',
     category: 'Mathematics',
@@ -44,9 +37,9 @@ const educatorCourses = [
     duration: '5h 05m',
     students: 112,
     status: 'active',
-    videos: generateVideos(112),
-  },
-  {
+    videos: EducatorVideoFactory.createDefaultSet(112),
+  }),
+  new EducatorCourse({
     id: 3,
     title: 'Linear Algebra & Matrix Theory',
     category: 'Mathematics',
@@ -56,9 +49,9 @@ const educatorCourses = [
     duration: '4h 50m',
     students: 89,
     status: 'active',
-    videos: generateVideos(89),
-  },
-  {
+    videos: EducatorVideoFactory.createDefaultSet(89),
+  }),
+  new EducatorCourse({
     id: 4,
     title: 'Differential Equations for Engineers',
     category: 'Mathematics',
@@ -68,13 +61,9 @@ const educatorCourses = [
     duration: '5h 30m',
     students: 0,
     status: 'draft',
-    videos: generateVideos(0),
-  },
+    videos: EducatorVideoFactory.createDefaultSet(0),
+  }),
 ]
-
-// ── Helpers ────────────────────────────────────────────────────────────────
-const getStripeClass = (color) =>
-  color === '#1a4a7a' ? 'ecp-course-card__stripe--blue' : 'ecp-course-card__stripe--dark'
 
 const SORTS = [
   { key: 'default',  label: 'Default'   },
@@ -89,9 +78,8 @@ const TABS = [
   { key: 'draft',  label: 'Draft'       },
 ]
 
-// ── Video Row ──────────────────────────────────────────────────────────────
 const VideoRow = ({ video, maxStudents }) => {
-  const pct = maxStudents > 0 ? Math.round((video.students / maxStudents) * 100) : 0
+  const pct = video.getRelativeReach(maxStudents)
 
   return (
     <div className="ecp-video-row">
@@ -141,14 +129,10 @@ const VideoRow = ({ video, maxStudents }) => {
   )
 }
 
-// ── Course Card ────────────────────────────────────────────────────────────
 const EducatorCourseCard = ({ course }) => {
   const [expanded, setExpanded] = useState(false)
-  const maxStudents = course.videos[0]?.students || 1
-
-  const completionRate = course.students > 0
-    ? Math.round((course.videos[course.videos.length - 1].students / course.students) * 100)
-    : 0
+  const maxStudents = course.getMaxVideoStudents()
+  const completionRate = course.getCompletionRate()
 
   return (
     <div className="ecp-course-card">
@@ -157,7 +141,7 @@ const EducatorCourseCard = ({ course }) => {
       <div className="ecp-course-card__top">
 
         {/* Color stripe */}
-        <div className={`ecp-course-card__stripe ${getStripeClass(course.color)}`} />
+        <div className={`ecp-course-card__stripe ${course.getStripeClass()}`} />
 
         {/* Main info */}
         <div className="ecp-course-card__main">
@@ -225,35 +209,15 @@ const EducatorCourseCard = ({ course }) => {
   )
 }
 
-// ── Main Page ──────────────────────────────────────────────────────────────
 const EducatorCoursePage = () => {
   const [tab, setTab]       = useState('all')
   const [sort, setSort]     = useState('default')
 
-  // Filter
-  const filtered = educatorCourses.filter(c =>
-    tab === 'all' ? true : c.status === tab
-  )
-
-  // Sort
-  const sorted = [...filtered].sort((a, b) => {
-    if (sort === 'students') return b.students - a.students
-    if (sort === 'semester') return a.semester - b.semester
-    if (sort === 'title')    return a.title.localeCompare(b.title)
-    return 0
-  })
-
-  // Aggregate KPIs
-  const totalStudents  = educatorCourses.reduce((s, c) => s + c.students, 0)
-  const totalCourses   = educatorCourses.length
-  const activeCourses  = educatorCourses.filter(c => c.status === 'active').length
-  const totalVideos    = educatorCourses.reduce((s, c) => s + c.lessons, 0)
-
-  const tabCounts = {
-    all:    educatorCourses.length,
-    active: educatorCourses.filter(c => c.status === 'active').length,
-    draft:  educatorCourses.filter(c => c.status === 'draft').length,
-  }
+  const filtered = EducatorCoursesAnalytics.filterByTab(educatorCourses, tab)
+  const sorted = EducatorCoursesAnalytics.sortCourses(filtered, sort)
+  const { totalStudents, totalCourses, activeCourses, totalVideos } =
+    EducatorCoursesAnalytics.getAggregateStats(educatorCourses)
+  const tabCounts = EducatorCoursesAnalytics.getTabCounts(educatorCourses)
 
   return (
     <div className="ecp-page">
