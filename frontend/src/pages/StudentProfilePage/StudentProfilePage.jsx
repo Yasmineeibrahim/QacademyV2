@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faPhone, faCalendarAlt, faUser} from '@fortawesome/free-solid-svg-icons'
 
 const StudentProfilePage = () => {
-  // Mock student data — replace with API fetch
   const [student] = useState({
     first_name: 'Layla',
     last_name: 'Hassan',
