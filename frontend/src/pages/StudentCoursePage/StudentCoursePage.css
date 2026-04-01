@@ -1,0 +1,580 @@
+/* ── StudentCoursePage.css ────────────────────────────────────────────── */
+
+.scp-page {
+  padding-top: 72px;
+  min-height: 100vh;
+  background: #f7f9fb;
+}
+
+/* ── Header ── */
+.scp-header {
+  background: #042a4e;
+  padding: 40px 0 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.scp-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 80% 50%, rgba(255, 246, 19, 0.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.scp-header__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.scp-header__left {}
+
+.scp-header__tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #fff613;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.scp-header__title {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 2rem;
+  color: #ffffff;
+  line-height: 1.2;
+  margin: 0 0 6px;
+}
+
+.scp-header__sub {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+}
+
+.scp-header__stats {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.scp-header__stat-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 12px 18px;
+  text-align: center;
+  min-width: 80px;
+}
+
+.scp-header__stat-num {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.5rem;
+  color: #fff613;
+  display: block;
+  line-height: 1;
+}
+
+.scp-header__stat-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  margin-top: 4px;
+  display: block;
+}
+
+/* ── Overall progress bar under header ── */
+.scp-overall-progress {
+  background: #042a4e;
+  padding: 0 0 20px;
+}
+
+.scp-overall-progress__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.scp-overall-progress__row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.scp-overall-progress__label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.scp-overall-progress__track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.scp-overall-progress__fill {
+  height: 100%;
+  background: #fff613;
+  border-radius: 99px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scp-overall-progress__pct {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff613;
+  white-space: nowrap;
+  min-width: 36px;
+  text-align: right;
+}
+
+/* ── Tabs ── */
+.scp-tabs {
+  background: #ffffff;
+  border-bottom: 1px solid rgba(4, 42, 78, 0.08);
+  position: sticky;
+  top: 72px;
+  z-index: 10;
+}
+
+.scp-tabs__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: flex;
+  gap: 0;
+}
+
+.scp-tab-btn {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 16px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(4, 42, 78, 0.45);
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.scp-tab-btn:hover {
+  color: #042a4e;
+}
+
+.scp-tab-btn--active {
+  color: #042a4e;
+  border-bottom-color: #fff613;
+}
+
+.scp-tab-btn__count {
+  background: rgba(4, 42, 78, 0.08);
+  color: rgba(4, 42, 78, 0.5);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 99px;
+  margin-left: 6px;
+}
+
+.scp-tab-btn--active .scp-tab-btn__count {
+  background: #fff613;
+  color: #042a4e;
+}
+
+/* ── Body ── */
+.scp-body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 36px 32px 60px;
+}
+
+/* ── Sort / filter bar ── */
+.scp-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.scp-toolbar__left {
+  font-size: 13px;
+  color: rgba(4, 42, 78, 0.45);
+  font-weight: 500;
+}
+
+.scp-toolbar__left strong {
+  color: #042a4e;
+}
+
+.scp-toolbar__right {
+  display: flex;
+  gap: 8px;
+}
+
+.scp-sort-btn {
+  background: #fff;
+  border: 1px solid rgba(4, 42, 78, 0.14);
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(4, 42, 78, 0.55);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.18s;
+}
+
+.scp-sort-btn:hover {
+  border-color: #042a4e;
+  color: #042a4e;
+}
+
+.scp-sort-btn--active {
+  background: #042a4e;
+  border-color: #042a4e;
+  color: #fff;
+}
+
+/* ── Grid ── */
+.scp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+/* ── Enrolled Course Card ── */
+.scp-card {
+  background: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(4, 42, 78, 0.08);
+  border: 1px solid rgba(4, 42, 78, 0.07);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.scp-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 40px rgba(4, 42, 78, 0.14);
+}
+
+/* Banner */
+.scp-card__banner {
+  height: 110px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+}
+
+.scp-card__banner--dark { background: #042a4e; }
+.scp-card__banner--blue { background: #1a4a7a; }
+
+.scp-card__category {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.15);
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.scp-card__status-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.scp-card__status-badge--active {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.scp-card__status-badge--completed {
+  background: rgba(255, 246, 19, 0.2);
+  color: #fff613;
+  border: 1px solid rgba(255, 246, 19, 0.3);
+}
+
+.scp-card__status-badge--paused {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Body */
+.scp-card__body {
+  padding: 20px 18px 0;
+  flex: 1;
+}
+
+.scp-card__title {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 0.95rem;
+  color: #042a4e;
+  line-height: 1.35;
+  margin: 0 0 10px;
+}
+
+.scp-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.scp-card__meta-item {
+  font-size: 11.5px;
+  color: rgba(4, 42, 78, 0.5);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Progress section */
+.scp-card__progress {
+  padding: 0 18px 18px;
+}
+
+.scp-card__progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.scp-card__progress-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(4, 42, 78, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.scp-card__progress-pct {
+  font-size: 13px;
+  font-weight: 800;
+  color: #042a4e;
+  font-family: 'Archivo Black', sans-serif;
+}
+
+.scp-card__progress-track {
+  height: 8px;
+  background: rgba(4, 42, 78, 0.07);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.scp-card__progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scp-card__progress-fill--low    { background: #3b82f6; }
+.scp-card__progress-fill--mid    { background: #f59e0b; }
+.scp-card__progress-fill--high   { background: #22c55e; }
+.scp-card__progress-fill--done   { background: #fff613; filter: drop-shadow(0 0 6px rgba(255,246,19,0.5)); }
+
+.scp-card__progress-lessons {
+  font-size: 11px;
+  color: rgba(4, 42, 78, 0.4);
+  font-weight: 500;
+}
+
+/* Footer */
+.scp-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px 16px;
+  border-top: 1px solid rgba(4, 42, 78, 0.06);
+}
+
+.scp-card__instructor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scp-card__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #042a4e;
+  color: #fff613;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.scp-card__instructor-name {
+  font-size: 11.5px;
+  color: rgba(4, 42, 78, 0.55);
+  font-weight: 500;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scp-card__continue-btn {
+  background: #042a4e;
+  color: #fff;
+  border: none;
+  padding: 7px 16px;
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 7px;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.scp-card__continue-btn:hover {
+  background: #fff613;
+  color: #042a4e;
+  box-shadow: 0 0 14px rgba(255, 246, 19, 0.45);
+}
+
+.scp-card__continue-btn--done {
+  background: rgba(4, 42, 78, 0.07);
+  color: rgba(4, 42, 78, 0.45);
+}
+
+.scp-card__continue-btn--done:hover {
+  background: #042a4e;
+  color: #fff;
+  box-shadow: none;
+}
+
+/* ── Empty state ── */
+.scp-empty {
+  text-align: center;
+  padding: 80px 20px;
+  color: rgba(4, 42, 78, 0.35);
+}
+
+.scp-empty__emoji {
+  font-size: 52px;
+  margin-bottom: 16px;
+}
+
+.scp-empty__title {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.1rem;
+  color: rgba(4, 42, 78, 0.5);
+  margin: 0 0 8px;
+}
+
+.scp-empty__sub {
+  font-size: 14px;
+  margin: 0 0 24px;
+}
+
+.scp-empty__btn {
+  background: #042a4e;
+  color: #fff;
+  border: none;
+  padding: 12px 28px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, color 0.2s;
+}
+
+.scp-empty__btn:hover {
+  background: #fff613;
+  color: #042a4e;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .scp-header__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 0 20px;
+  }
+
+  .scp-header__stats {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .scp-overall-progress__inner {
+    padding: 0 20px;
+  }
+
+  .scp-tabs__inner {
+    padding: 0 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .scp-tabs__inner::-webkit-scrollbar { display: none; }
+
+  .scp-body {
+    padding: 28px 20px 60px;
+  }
+}
+
+@media (max-width: 640px) {
+  .scp-header__title {
+    font-size: 1.5rem;
+  }
+
+  .scp-header__stats {
+    gap: 8px;
+  }
+
+  .scp-header__stat-pill {
+    min-width: 68px;
+    padding: 10px 14px;
+  }
+
+  .scp-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .scp-toolbar__right {
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .scp-grid {
+    grid-template-columns: 1fr;
+  }
+}
