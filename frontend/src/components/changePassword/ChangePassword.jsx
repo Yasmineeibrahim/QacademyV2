@@ -59,7 +59,7 @@ const ChangePassword = ({
               name="new"
               value={passwords.new}
               onChange={handlePasswordChange}
-              placeholder="Min. 8 characters"
+              placeholder="Min. 6, 1 uppercase, 1 number, 1 symbol"
               autoComplete="new-password"
             />
             <button type="button" className="spp-eye" onClick={() => setShowNew(!showNew)}>
@@ -69,10 +69,10 @@ const ChangePassword = ({
           {passwords.new && (
             <div className="spp-strength">
               <div
-                className={`spp-strength-bar ${passwords.new.length >= 12 ? 'strong' : passwords.new.length >= 8 ? 'medium' : 'weak'}`}
+                className={`spp-strength-bar ${passwords.new.length >= 10 ? 'strong' : passwords.new.length >= 6 ? 'medium' : 'weak'}`}
                 style={{ width: `${Math.min(100, (passwords.new.length / 14) * 100)}%` }}
               />
-              <span>{passwords.new.length >= 12 ? 'Strong' : passwords.new.length >= 8 ? 'Medium' : 'Weak'}</span>
+              <span>{passwords.new.length >= 10 ? 'Strong' : passwords.new.length >= 6 ? 'Medium' : 'Weak'}</span>
             </div>
           )}
         </div>

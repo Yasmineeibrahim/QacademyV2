@@ -6,6 +6,9 @@ import ChangePassword from '../../components/changePassword/ChangePassword'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faPhone, faCalendarAlt, faUser} from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
+
+const PASSWORD_POLICY_REGEX = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/
+
 const StudentProfilePage = () => {
   const [student, setStudent] = useState(null)
 
@@ -50,12 +53,49 @@ const StudentProfilePage = () => {
 
   const handlePasswordSubmit = (e) => {
     e.preventDefault()
-    if (!passwords.current) { setPwError('Please enter your current password.'); setPwStatus('error'); return }
-    if (passwords.new.length < 8) { setPwError('New password must be at least 8 characters.'); setPwStatus('error'); return }
-    if (passwords.new !== passwords.confirm) { setPwError('New passwords do not match.'); setPwStatus('error'); return }
-    // TODO: call API to update password
-    setPwStatus('success')
-    setPasswords({ current: '', new: '', confirm: '' })
+    const submitPasswordChange = async () => {
+      if (!passwords.current) {
+        setPwError('Please enter your current password.')
+        setPwStatus('error')
+        return
+      }
+
+      if (!PASSWORD_POLICY_REGEX.test(passwords.new)) {
+        setPwError('New password must be at least 6 characters with one uppercase letter, one number, and one symbol.')
+        setPwStatus('error')
+        return
+      }
+
+      if (passwords.new !== passwords.confirm) {
+        setPwError('New passwords do not match.')
+        setPwStatus('error')
+        return
+      }
+
+      try {
+        const storedUser = JSON.parse(localStorage.getItem('user'))
+        if (!storedUser?.id) {
+          setPwError('You are not logged in.')
+          setPwStatus('error')
+          return
+        }
+
+        await axios.patch('http://localhost:5000/api/accounts/change-password', {
+          id: storedUser.id,
+          currentPassword: passwords.current,
+          newPassword: passwords.new,
+        })
+
+        setPwStatus('success')
+        setPwError('')
+        setPasswords({ current: '', new: '', confirm: '' })
+      } catch (err) {
+        setPwStatus('error')
+        setPwError(err.response?.data?.message || 'Failed to update password. Please try again.')
+      }
+    }
+
+    submitPasswordChange()
   }
 
   if (!student) {
