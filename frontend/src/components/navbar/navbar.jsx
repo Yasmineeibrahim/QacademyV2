@@ -83,24 +83,24 @@ export const Navbar = () => {
 
   if (isStudent) {
     menuItems.push({ icon: '👤', label: 'Profile', path: '/profile' })
-    menuItems.push({ icon: '📚', label: 'My Courses', path: '/my-courses' })
+    menuItems.push({ icon: '📚', label: 'My Courses', path: '/student-courses' })
   }
 
   if (isEducator) {
     menuItems.push({ icon: '👤', label: 'Profile', path: '/profile' })
-    menuItems.push({ icon: '📚', label: 'My Courses', path: '/my-courses' })
-    menuItems.push({ icon: '📈', label: 'My Analytics', path: '/my-analytics' })
+    menuItems.push({ icon: '📚', label: 'My Courses', path: '/student-courses' })
+    menuItems.push({ icon: '📈', label: 'My Analytics', path: '/educator-analytics' })
   }
 
   if (isAdmin) {
-    menuItems.push({ icon: '📈', label: 'My Analytics', path: '/my-analytics' })
+    menuItems.push({ icon: '📈', label: 'My Analytics', path: '/educator-analytics' })
     menuItems.push({ icon: '👤', label: 'Profile', path: '/profile' })
     menuItems.push({ icon: '🛠️', label: 'Control Nexus', path: '/control-nexus' })
   }
 
   if (!menuItems.length) {
     menuItems.push({ icon: '👤', label: 'Profile', path: '/profile' })
-    menuItems.push({ icon: '📚', label: 'My Courses', path: '/my-courses' })
+    menuItems.push({ icon: '📚', label: 'My Courses', path: '/student-courses' })
   }
 
   return (

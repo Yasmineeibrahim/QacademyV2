@@ -12,9 +12,9 @@ import './App.css'
 import LoginPage          from './pages/loginpage/loginPage'
 import RegisterPage       from './pages/registerpage/registerpage'
 import AboutUs from './pages/about/AboutUs'
-import ProfilePage from './pages/profilepage/profilePage'
-import StudentCourses from './pages/studentCoursesPage/studentCourses'
-import AnalyticsPage from './pages/analyticsPage/AnalyticsPage'
+import StudentProfilePage from './pages/StudentProfilePage/StudentProfilePage'
+import StudentCoursesPage from './pages/StudentCoursePage/StudentCoursePage'
+import EducatorAnalyticsPage from './pages/EducatorAnalyticsPage/EducatorAnalyticsPage'
 import AdminControlPage from './pages/adminControlPage/AdminControlPage'
 
 function HomePage() {
@@ -42,9 +42,9 @@ function AppContent() {
         <Route path="/login"         element={<LoginPage />} />
         <Route path="/register"      element={<RegisterPage />} />
         <Route path="/about" element={<AboutUs />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/my-courses" element={<StudentCourses />} />
-        <Route path="/my-analytics" element={<AnalyticsPage />} />
+        <Route path="/profile" element={<StudentProfilePage />} />
+        <Route path="/student-courses" element={<StudentCoursesPage />} />
+        <Route path="/educator-analytics" element={<EducatorAnalyticsPage />} />
         <Route path="/control-nexus" element={<AdminControlPage />} />
       </Routes>
       {!isAuthPage && <Footer />}
