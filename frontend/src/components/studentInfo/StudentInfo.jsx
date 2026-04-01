@@ -1,11 +1,12 @@
 import React from 'react'
 import './StudentInfo.css'
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUser } from '@fortawesome/free-solid-svg-icons'
 const StudentInfo = ({ infoFields }) => {
   return (
     <section className="spp-card spp-card--info">
       <div className="spp-card-header">
-        <span className="spp-card-icon">👤</span>
+        <span className="spp-card-icon"><FontAwesomeIcon icon={faUser} /></span>
         <h2>Personal Information</h2>
       </div>
       <div className="spp-info-list">
