@@ -12,8 +12,8 @@ import './App.css'
 import LoginPage          from './pages/loginpage/loginPage'
 import RegisterPage       from './pages/registerpage/registerpage'
 import AboutUs from './pages/about/AboutUs'
-import StudentProfilePage from './pages/StudentProfilePage/StudentProfilePage'
-import StudentCoursesPage from './pages/StudentCoursePage/StudentCoursePage'
+import StudentCoursesPageComponent from './pages/StudentProfilePage/StudentProfilePage'
+import StudentProfilePageComponent from './pages/StudentCoursePage/StudentCoursePage'
 import EducatorAnalyticsPage from './pages/EducatorAnalyticsPage/EducatorAnalyticsPage'
 import AdminControlPage from './pages/adminControlPage/AdminControlPage'
 
@@ -42,8 +42,8 @@ function AppContent() {
         <Route path="/login"         element={<LoginPage />} />
         <Route path="/register"      element={<RegisterPage />} />
         <Route path="/about" element={<AboutUs />} />
-        <Route path="/profile" element={<StudentProfilePage />} />
-        <Route path="/student-courses" element={<StudentCoursesPage />} />
+        <Route path="/profile" element={<StudentProfilePageComponent />} />
+        <Route path="/student-courses" element={<StudentCoursesPageComponent />} />
         <Route path="/educator-analytics" element={<EducatorAnalyticsPage />} />
         <Route path="/control-nexus" element={<AdminControlPage />} />
       </Routes>

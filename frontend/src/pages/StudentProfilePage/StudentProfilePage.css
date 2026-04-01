@@ -1,0 +1,301 @@
+/* ──────────────────────────────────────────
+   StudentProfilePage.css
+   Theme: Refined Academic — warm ivory + deep navy
+   ────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* ── CSS Variables ── */
+:root {
+  --spp-bg: #f5f2ec;
+  --spp-surface: #fffefb;
+  --spp-navy: #1a2545;
+  --spp-navy-light: #2d3f6b;
+  --spp-gold: #c9962f;
+  --spp-gold-light: #e8c46a;
+  --spp-teal: #2e7d7a;
+  --spp-teal-light: #e0f2f1;
+  --spp-text: #1e1e2e;
+  --spp-muted: #7b7b8e;
+  --spp-border: #e2ddd5;
+  --spp-success-bg: #edf7f0;
+  --spp-success-text: #276142;
+  --spp-error-bg: #fdf2f2;
+  --spp-error-text: #9b2626;
+  --spp-radius: 16px;
+  --spp-shadow: 0 4px 24px rgba(26, 37, 69, 0.08);
+  --spp-shadow-hover: 0 8px 36px rgba(26, 37, 69, 0.14);
+}
+
+/* ── Root & Layout ── */
+.spp-root {
+  min-height: 100vh;
+  background: var(--spp-bg);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--spp-text);
+  position: relative;
+  overflow-x: hidden;
+  padding: 40px 20px 80px;
+}
+
+.spp-container {
+  max-width: 960px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Decorative Blobs ── */
+.spp-blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
+.spp-blob-1 {
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, var(--spp-gold-light), transparent);
+  top: -100px; right: -100px;
+}
+.spp-blob-2 {
+  width: 360px; height: 360px;
+  background: radial-gradient(circle, #a8d8d5, transparent);
+  bottom: -80px; left: -80px;
+}
+
+/* ── Hero / Header ── */
+.spp-hero {
+  background: var(--spp-navy);
+  border-radius: var(--spp-radius);
+  padding: 32px 36px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 28px;
+  box-shadow: var(--spp-shadow);
+  position: relative;
+  overflow: hidden;
+  animation: spp-fadeUp 0.5s ease both;
+}
+.spp-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.spp-avatar {
+  position: relative;
+  flex-shrink: 0;
+  width: 80px; height: 80px;
+}
+.spp-avatar span {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--spp-gold), var(--spp-gold-light));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: var(--spp-navy);
+  font-weight: 700;
+  position: relative; z-index: 1;
+}
+.spp-avatar-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px dashed rgba(201,150,47,0.4);
+  animation: spp-spin 20s linear infinite;
+}
+
+.spp-hero-text { flex: 1; }
+.spp-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: #fff;
+  margin: 0 0 4px;
+  letter-spacing: -0.3px;
+}
+.spp-subtitle {
+  color: rgba(255,255,255,0.55);
+  font-size: 14px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.spp-gpa-badge {
+  display: flex; flex-direction: column; align-items: center;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 14px 20px;
+  backdrop-filter: blur(4px);
+  flex-shrink: 0;
+}
+.spp-gpa-label { font-size: 10px; color: var(--spp-gold-light); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 2px; }
+.spp-gpa-value { font-family: 'Playfair Display', serif; font-size: 28px; color: #fff; font-weight: 700; }
+
+/* ── Two-column Grid ── */
+.spp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ── Cards ── */
+.spp-card {
+  background: var(--spp-surface);
+  border-radius: var(--spp-radius);
+  border: 1px solid var(--spp-border);
+  box-shadow: var(--spp-shadow);
+  overflow: hidden;
+  animation: spp-fadeUp 0.5s ease both;
+}
+.spp-card--info  { animation-delay: 0.1s; }
+.spp-card--password { animation-delay: 0.2s; }
+
+.spp-card-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--spp-border);
+}
+.spp-card-icon { font-size: 18px; }
+.spp-card-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--spp-navy);
+  margin: 0;
+}
+
+/* ── Info List ── */
+.spp-info-list { padding: 8px 0; }
+.spp-info-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 24px;
+  border-bottom: 1px solid rgba(226,221,213,0.5);
+  transition: background 0.15s;
+}
+.spp-info-row:last-child { border-bottom: none; }
+.spp-info-row:hover { background: rgba(201,150,47,0.04); }
+
+.spp-info-label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px;
+  color: var(--spp-muted);
+  font-weight: 500;
+  min-width: 120px;
+}
+.spp-info-icon { font-size: 14px; }
+.spp-info-value {
+  font-size: 13.5px;
+  color: var(--spp-text);
+  font-weight: 500;
+  text-align: right;
+}
+
+/* ── Password Form ── */
+.spp-pw-form { padding: 20px 24px 24px; display: flex; flex-direction: column; gap: 18px; }
+
+.spp-field { display: flex; flex-direction: column; gap: 6px; }
+.spp-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--spp-navy);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+.spp-input-wrap { position: relative; }
+.spp-input-wrap input {
+  width: 100%;
+  padding: 11px 40px 11px 14px;
+  border: 1.5px solid var(--spp-border);
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  background: var(--spp-bg);
+  color: var(--spp-text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+.spp-input-wrap input:focus {
+  border-color: var(--spp-navy-light);
+  box-shadow: 0 0 0 3px rgba(45,63,107,0.1);
+  background: #fff;
+}
+.spp-eye {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; font-size: 15px;
+  line-height: 1; padding: 2px; opacity: 0.6; transition: opacity 0.15s;
+}
+.spp-eye:hover { opacity: 1; }
+
+/* ── Strength Bar ── */
+.spp-strength {
+  display: flex; align-items: center; gap: 8px; margin-top: 6px;
+  height: 4px;
+}
+.spp-strength-bar {
+  height: 4px; border-radius: 2px;
+  transition: width 0.3s, background 0.3s;
+  background: #e2ddd5;
+}
+.spp-strength-bar.weak   { background: #d9534f; }
+.spp-strength-bar.medium { background: var(--spp-gold); }
+.spp-strength-bar.strong { background: var(--spp-teal); }
+.spp-strength span { font-size: 11px; color: var(--spp-muted); font-weight: 500; white-space: nowrap; }
+
+/* ── Match Hint ── */
+.spp-match-hint { font-size: 12px; margin-top: 4px; font-weight: 500; }
+.spp-match-hint.match    { color: var(--spp-teal); }
+.spp-match-hint.no-match { color: #d9534f; }
+
+/* ── Alerts ── */
+.spp-alert {
+  margin: 16px 24px 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.spp-alert--success { background: var(--spp-success-bg); color: var(--spp-success-text); border: 1px solid #b2dfcc; }
+.spp-alert--error   { background: var(--spp-error-bg);   color: var(--spp-error-text);   border: 1px solid #f5c6c6; }
+
+/* ── Submit Button ── */
+.spp-btn-submit {
+  width: 100%;
+  padding: 13px;
+  background: var(--spp-navy);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+.spp-btn-submit:hover  { background: var(--spp-navy-light); box-shadow: 0 4px 16px rgba(26,37,69,0.25); }
+.spp-btn-submit:active { transform: scale(0.985); }
+
+/* ── Animations ── */
+@keyframes spp-fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes spp-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 720px) {
+  .spp-grid { grid-template-columns: 1fr; }
+  .spp-hero { flex-wrap: wrap; padding: 24px 20px; }
+  .spp-name { font-size: 22px; }
+  .spp-gpa-badge { width: 100%; flex-direction: row; justify-content: space-between; padding: 10px 14px; }
+}
