@@ -1,20 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './StudentProfilePage.css'
 import StudentProfileHero from '../../components/studentProfileHero/StudentProfileHero'
 import StudentInfo from '../../components/studentInfo/StudentInfo'
 import ChangePassword from '../../components/changePassword/ChangePassword'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faPhone, faCalendarAlt, faUser} from '@fortawesome/free-solid-svg-icons'
-
+import axios from 'axios'
 const StudentProfilePage = () => {
-  const [student] = useState({
-    first_name: 'Layla',
-    last_name: 'Hassan',
-    email: 'layla.hassan@university.edu',
-    phone_number: '+20 100 234 5678',
-    joined: 'September 2022',
-    avatar_initials: 'LH',
-  })
+  const [student, setStudent] = useState(null)
 
   const [passwords, setPasswords] = useState({
     current: '',
@@ -26,6 +19,28 @@ const StudentProfilePage = () => {
   const [showCurrent, setShowCurrent] = useState(false)
   const [showNew, setShowNew] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
+
+  useEffect(() => {
+    const fetchStudent = async () => {
+      try {
+        const storedUser = JSON.parse(localStorage.getItem('user'))
+        if (!storedUser?.id) {
+          setStudent(null)
+          return
+        }
+
+        const res = await axios.get(
+          `http://localhost:5000/api/accounts/${storedUser.id}`
+        )
+
+        setStudent(res.data)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    fetchStudent()
+  }, [])
 
   const handlePasswordChange = (e) => {
     setPasswords({ ...passwords, [e.target.name]: e.target.value })
@@ -43,14 +58,17 @@ const StudentProfilePage = () => {
     setPasswords({ current: '', new: '', confirm: '' })
   }
 
+  if (!student) {
+    return <div>Loading...</div>
+  }
+
   const infoFields = [
-    {label:'First name', value: student.first_name, icon: <FontAwesomeIcon icon={faUser} />},
-    {label:'Last name', value: student.last_name, icon: <FontAwesomeIcon icon={faUser} />},
+    { label: 'First name', value: student.first_name, icon: <FontAwesomeIcon icon={faUser} /> },
+    { label: 'Last name', value: student.last_name, icon: <FontAwesomeIcon icon={faUser} /> },
     { label: 'Email Address', value: student.email, icon: <FontAwesomeIcon icon={faEnvelope} /> },
     { label: 'Phone Number', value: student.phone_number, icon: <FontAwesomeIcon icon={faPhone} /> },
-    { label: 'Enrolled Since', value: student.joined, icon: <FontAwesomeIcon icon={faCalendarAlt} /> },
+    { label: 'Enrolled Since', value: student.created_at, icon: <FontAwesomeIcon icon={faCalendarAlt} /> },
   ]
-
   return (
     <div className="spp-root">
       {/* Decorative background blobs */}
