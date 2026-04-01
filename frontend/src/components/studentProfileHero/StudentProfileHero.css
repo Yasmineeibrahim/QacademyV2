@@ -7,6 +7,7 @@
   align-items: center;
   gap: 24px;
   margin-bottom: 28px;
+  margin-top: 20px;
   box-shadow: var(--spp-shadow);
   position: relative;
   overflow: hidden;
@@ -46,7 +47,7 @@
 .spp-hero-text { flex: 1; }
 .spp-name {
   font-family: 'Playfair Display', serif;
-  font-size: 28px;
+  font-size: 36px;
   color: #fff;
   margin: 0 0 4px;
   letter-spacing: -0.3px;
