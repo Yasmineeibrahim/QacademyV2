@@ -45,8 +45,8 @@ const StudentProfilePage = () => {
   }
 
   const infoFields = [
-    {label:'first_name', value: student.first_name, icon: <FontAwesomeIcon icon={faUser} />},
-    {label:'last_name', value: student.last_name, icon: <FontAwesomeIcon icon={faUser} />},
+    {label:'First name', value: student.first_name, icon: <FontAwesomeIcon icon={faUser} />},
+    {label:'Last name', value: student.last_name, icon: <FontAwesomeIcon icon={faUser} />},
     { label: 'Email Address', value: student.email, icon: <FontAwesomeIcon icon={faEnvelope} /> },
     { label: 'Phone Number', value: student.phone_number, icon: <FontAwesomeIcon icon={faPhone} /> },
     { label: 'Enrolled Since', value: student.joined, icon: <FontAwesomeIcon icon={faCalendarAlt} /> },
