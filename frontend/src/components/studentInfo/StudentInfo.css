@@ -1,0 +1,50 @@
+/* ── Cards ── */
+.spp-card {
+  background: var(--spp-surface);
+  border-radius: var(--spp-radius);
+  border: 1px solid var(--spp-border);
+  box-shadow: var(--spp-shadow);
+  overflow: hidden;
+  animation: spp-fadeUp 0.5s ease both;
+}
+.spp-card--info  { animation-delay: 0.1s; }
+
+.spp-card-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--spp-border);
+}
+.spp-card-icon { font-size: 18px; }
+.spp-card-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--spp-navy);
+  margin: 0;
+}
+
+/* ── Info List ── */
+.spp-info-list { padding: 8px 0; }
+.spp-info-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 24px;
+  border-bottom: 1px solid rgba(226,221,213,0.5);
+  transition: background 0.15s;
+}
+.spp-info-row:last-child { border-bottom: none; }
+.spp-info-row:hover { background: rgba(201,150,47,0.04); }
+
+.spp-info-label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px;
+  color: var(--spp-muted);
+  font-weight: 500;
+  min-width: 120px;
+}
+.spp-info-icon { font-size: 14px; }
+.spp-info-value {
+  font-size: 13.5px;
+  color: var(--spp-text);
+  font-weight: 500;
+  text-align: right;
+}
