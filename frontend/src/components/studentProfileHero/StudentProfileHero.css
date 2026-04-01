@@ -7,6 +7,7 @@
   align-items: center;
   gap: 24px;
   margin-bottom: 28px;
+  height: 100px;
   margin-top: 20px;
   box-shadow: var(--spp-shadow);
   position: relative;
