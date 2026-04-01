@@ -88,7 +88,7 @@ export const Navbar = () => {
 
   if (isEducator) {
     menuItems.push({ icon: '👤', label: 'Profile', path: '/profile' })
-    menuItems.push({ icon: '📚', label: 'My Courses', path: '/student-courses' })
+    menuItems.push({ icon: '📚', label: 'My Courses', path: '/educator-courses' })
     menuItems.push({ icon: '📈', label: 'My Analytics', path: '/educator-analytics' })
   }
 

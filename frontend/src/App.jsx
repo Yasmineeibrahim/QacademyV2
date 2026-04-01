@@ -16,6 +16,7 @@ import StudentCoursesPageComponent from './pages/StudentProfilePage/StudentProfi
 import StudentProfilePageComponent from './pages/StudentCoursePage/StudentCoursePage'
 import EducatorAnalyticsPage from './pages/EducatorAnalyticsPage/EducatorAnalyticsPage'
 import AdminControlPage from './pages/adminControlPage/AdminControlPage'
+import EducatorCoursesPage from './pages/EducatorCoursePage/EducatorCoursePage'
 
 function HomePage() {
   return (
@@ -46,6 +47,7 @@ function AppContent() {
         <Route path="/student-courses" element={<StudentProfilePageComponent />} />
         <Route path="/educator-analytics" element={<EducatorAnalyticsPage />} />
         <Route path="/control-nexus" element={<AdminControlPage />} />
+        <Route path="/educator-courses" element={<EducatorCoursesPage />} />
       </Routes>
       {!isAuthPage && <Footer />}
     </>
