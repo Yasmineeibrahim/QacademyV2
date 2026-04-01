@@ -6,7 +6,7 @@ import ChangePassword from '../../components/changePassword/ChangePassword'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faPhone, faCalendarAlt, faUser} from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
-
+const API_BASE_URL = "https://debian-wed-tales-payments.trycloudflare.com" || "http://localhost:5000";
 const PASSWORD_POLICY_REGEX = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/
 
 const StudentProfilePage = () => {
@@ -33,7 +33,7 @@ const StudentProfilePage = () => {
         }
 
         const res = await axios.get(
-          `http://localhost:5000/api/accounts/${storedUser.id}`
+          `${API_BASE_URL}/api/accounts/${storedUser.id}`
         )
 
         setStudent(res.data)
@@ -80,7 +80,7 @@ const StudentProfilePage = () => {
           return
         }
 
-        await axios.patch('http://localhost:5000/api/accounts/change-password', {
+        await axios.patch(`${API_BASE_URL}/api/accounts/change-password`, {
           id: storedUser.id,
           currentPassword: passwords.current,
           newPassword: passwords.new,
