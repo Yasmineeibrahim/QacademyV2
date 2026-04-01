@@ -1,6 +1,7 @@
 import React from 'react'
 import './ChangePassword.css'
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEye, faEyeSlash ,faLock} from '@fortawesome/free-solid-svg-icons'
 const ChangePassword = ({
   passwords,
   pwStatus,
@@ -17,7 +18,7 @@ const ChangePassword = ({
   return (
     <section className="spp-card spp-card--password">
       <div className="spp-card-header">
-        <span className="spp-card-icon">🔒</span>
+        <span className="spp-card-icon"><FontAwesomeIcon icon={faLock} /></span>
         <h2>Change Password</h2>
       </div>
 
@@ -45,7 +46,7 @@ const ChangePassword = ({
               autoComplete="current-password"
             />
             <button type="button" className="spp-eye" onClick={() => setShowCurrent(!showCurrent)}>
-              {showCurrent ? '🙈' : '👁️'}
+              {showCurrent ? <FontAwesomeIcon icon={faEye} /> : <FontAwesomeIcon  icon={faEyeSlash}/>}
             </button>
           </div>
         </div>
@@ -62,7 +63,7 @@ const ChangePassword = ({
               autoComplete="new-password"
             />
             <button type="button" className="spp-eye" onClick={() => setShowNew(!showNew)}>
-              {showNew ? '🙈' : '👁️'}
+              {showNew ? <FontAwesomeIcon icon={faEye} /> : <FontAwesomeIcon  icon={faEyeSlash}/>}
             </button>
           </div>
           {passwords.new && (
@@ -88,7 +89,7 @@ const ChangePassword = ({
               autoComplete="new-password"
             />
             <button type="button" className="spp-eye" onClick={() => setShowConfirm(!showConfirm)}>
-              {showConfirm ? '🙈' : '👁️'}
+              {showConfirm ? <FontAwesomeIcon icon={faEye} /> : <FontAwesomeIcon  icon={faEyeSlash}/>}
             </button>
           </div>
           {passwords.confirm && passwords.new && (
