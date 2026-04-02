@@ -4,8 +4,7 @@ import './loginPage.css'
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-
-const API_BASE_URL = "https://alabama-particular-assignment-revenues.trycloudflare.com" || "http://localhost:5000";
+import { API_BASE_URL } from '../../config/api'
 
 const loginPage = () => {
   const navigate = useNavigate();

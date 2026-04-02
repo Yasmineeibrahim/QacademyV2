@@ -6,7 +6,7 @@ import ChangePassword from '../../components/changePassword/ChangePassword'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faPhone, faCalendarAlt, faUser} from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
-const API_BASE_URL = "https://alabama-particular-assignment-revenues.trycloudflare.com";
+import { API_BASE_URL } from '../../config/api'
 const PASSWORD_POLICY_REGEX = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/
 
 const StudentProfilePage = () => {

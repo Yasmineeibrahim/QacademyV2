@@ -65,7 +65,7 @@ export const Navbar = () => {
   }
 
   // Derive initials for avatar
-  const displayName = user?.name || user?.first_name || user?.email
+  const displayName = user?.name || user?.first_name || user?.email || 'Account'
   const userRole = String(user?.role || '').trim().toLowerCase()
   const isStudent = userRole === 'student'
   const isEducator = userRole === 'educator'
@@ -133,7 +133,7 @@ export const Navbar = () => {
               <div className="profile-dropdown">
                 <div className="profile-dropdown__header">
                   <span className="profile-dropdown__name">{displayName}</span>
-                  {user.name && <span className="profile-dropdown__email">{user.email}</span>}
+                  {user?.email && <span className="profile-dropdown__email">{user.email}</span>}
                 </div>
                 <div className="profile-dropdown__divider" />
                 {menuItems.map((item) => (
