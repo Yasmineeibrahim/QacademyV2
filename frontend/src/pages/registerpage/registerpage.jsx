@@ -3,8 +3,7 @@ import BeamGridBackground from '../../components/registerBackground/registerPage
 import './registerpage.css'
 import { useState } from "react";
 import axios from "axios";
-
-const API_BASE_URL = "https://hospitals-satin-hoping-linked.trycloudflare.com" || "http://localhost:5000";
+import { API_BASE_URL } from '../../config/api'
 
 const registerpage = () => {
    const [form, setForm] = useState({
