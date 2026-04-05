@@ -1,69 +1,17 @@
-import React, { useState} from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import './EducatorCoursePage.css'
 import {
   EducatorCourse,
   EducatorCoursesAnalytics,
-  EducatorVideoFactory,
 } from '../../models/courseModels'
+import { API_BASE_URL } from '../../config/api'
 
-// ── Mock Data (replace with real API data) ─────────────────────────────────
-const EDUCATOR = {
-  name: 'Dr. Ahmed Nour',
-  initials: 'AN',
-  department: 'Mathematics & Engineering Sciences',
+const toInitials = (firstName = '', lastName = '', email = '') => {
+  const letters = [firstName?.[0], lastName?.[0]].filter(Boolean)
+  if (letters.length > 0) return letters.join('').toUpperCase()
+  return (email?.[0] || 'E').toUpperCase()
 }
-
-const educatorCourses = [
-  new EducatorCourse({
-    id: 1,
-    title: 'Calculus I – Limits & Derivatives',
-    category: 'Mathematics',
-    color: '#042a4e',
-    semester: 1,
-    lessons: 8,
-    duration: '4h 20m',
-    students: 148,
-    status: 'active',
-    videos: EducatorVideoFactory.createDefaultSet(148),
-  }),
-  new EducatorCourse({
-    id: 2,
-    title: 'Calculus II – Integration Techniques',
-    category: 'Mathematics',
-    color: '#1a4a7a',
-    semester: 2,
-    lessons: 8,
-    duration: '5h 05m',
-    students: 112,
-    status: 'active',
-    videos: EducatorVideoFactory.createDefaultSet(112),
-  }),
-  new EducatorCourse({
-    id: 3,
-    title: 'Linear Algebra & Matrix Theory',
-    category: 'Mathematics',
-    color: '#042a4e',
-    semester: 3,
-    lessons: 8,
-    duration: '4h 50m',
-    students: 89,
-    status: 'active',
-    videos: EducatorVideoFactory.createDefaultSet(89),
-  }),
-  new EducatorCourse({
-    id: 4,
-    title: 'Differential Equations for Engineers',
-    category: 'Mathematics',
-    color: '#1a4a7a',
-    semester: 4,
-    lessons: 8,
-    duration: '5h 30m',
-    students: 0,
-    status: 'draft',
-    videos: EducatorVideoFactory.createDefaultSet(0),
-  }),
-]
 
 const SORTS = [
   { key: 'default',  label: 'Default'   },
@@ -210,8 +158,81 @@ const EducatorCourseCard = ({ course }) => {
 }
 
 const EducatorCoursePage = () => {
-  const [tab, setTab]       = useState('all')
-  const [sort, setSort]     = useState('default')
+  const [tab, setTab] = useState('all')
+  const [sort, setSort] = useState('default')
+  const [educatorCourses, setEducatorCourses] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  const storedUser = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem('user') || 'null')
+    } catch {
+      return null
+    }
+  }, [])
+
+  const EDUCATOR = useMemo(() => ({
+    name:
+      [storedUser?.first_name, storedUser?.last_name].filter(Boolean).join(' ') ||
+      storedUser?.email ||
+      'Educator',
+    initials: toInitials(storedUser?.first_name, storedUser?.last_name, storedUser?.email),
+    department: 'Mathematics & Engineering Sciences',
+  }), [storedUser])
+
+  useEffect(() => {
+    const loadEducatorCourses = async () => {
+      if (!storedUser?.id) {
+        setError('No logged-in educator found.')
+        setLoading(false)
+        return
+      }
+
+      try {
+        setLoading(true)
+        setError('')
+
+        const res = await fetch(`${API_BASE_URL}/api/courses/educator/${storedUser.id}`)
+        if (!res.ok) {
+          throw new Error(`Failed to fetch educator courses (${res.status})`)
+        }
+
+        const data = await res.json()
+        const mapped = (Array.isArray(data) ? data : []).map((course) => {
+          const videos = (Array.isArray(course.videos) ? course.videos : []).map((video, index) => ({
+            id: video.order_index ?? index + 1,
+            title: video.title || `Video ${index + 1}`,
+            duration: video.duration || '0m 0s',
+            free: Number(video.price) === 0,
+            students: Number(video.students || 0),
+          }))
+
+          return new EducatorCourse({
+            id: course.id,
+            title: course.title,
+            category: course.category,
+            color: course.color,
+            semester: Number(course.semester || 0),
+            lessons: Number(course.lessons || videos.length),
+            duration: course.duration || '0h 0m',
+            students: Number(course.students || 0),
+            status: Number(course.lessons || 0) > 0 ? 'active' : 'draft',
+            videos,
+          })
+        })
+
+        setEducatorCourses(mapped)
+      } catch (fetchErr) {
+        console.error(fetchErr)
+        setError('Failed to load educator courses from the server.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadEducatorCourses()
+  }, [storedUser])
 
   const filtered = EducatorCoursesAnalytics.filterByTab(educatorCourses, tab)
   const sorted = EducatorCoursesAnalytics.sortCourses(filtered, sort)
@@ -296,7 +317,17 @@ const EducatorCoursePage = () => {
 
       {/* ── Body ── */}
       <div className="ecp-body">
-        {sorted.length === 0 ? (
+        {loading ? (
+          <div className="ecp-empty">
+            <div className="ecp-empty__emoji">⏳</div>
+            <p className="ecp-empty__title">Loading courses...</p>
+          </div>
+        ) : error ? (
+          <div className="ecp-empty">
+            <div className="ecp-empty__emoji">⚠️</div>
+            <p className="ecp-empty__title">{error}</p>
+          </div>
+        ) : sorted.length === 0 ? (
           <div className="ecp-empty">
             <div className="ecp-empty__emoji">📭</div>
             <p className="ecp-empty__title">No courses found.</p>
