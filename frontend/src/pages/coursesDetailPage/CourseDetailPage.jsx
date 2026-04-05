@@ -1,25 +1,33 @@
 // src/pages/CourseDetailPage.jsx
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { courses } from '../../assets/data/courses'
+import { API_BASE_URL } from '../../config/api'
 import './CourseDetailPage.css'
 
 const getCourseColorClass = (color) => (color === '#1a4a7a' ? 'cdp-player--blue' : 'cdp-player--dark')
 const getSideBannerColorClass = (color) => (color === '#1a4a7a' ? 'cdp-side-card__banner--blue' : 'cdp-side-card__banner--dark')
 
-// ── Mock topics per course (replace with real data later) ──────────────────
-const generateTopics = () => [
-  { id: 1, title: 'Introduction & Overview',        duration: '12:30', free: true  },
-  { id: 2, title: 'Core Concepts Explained',        duration: '18:45', free: false },
-  { id: 3, title: 'Hands-on Practice Session',      duration: '24:10', free: false },
-  { id: 4, title: 'Deep Dive: Advanced Techniques', duration: '31:05', free: false },
-  { id: 5, title: 'Mid term revision',     duration: '22:50', free: false },
-  { id: 6, title: 'Common Pitfalls & How to Avoid', duration: '15:20', free: false },
-  { id: 7, title: 'Project Walkthrough',            duration: '28:40', free: false },
-  { id: 8, title: 'Final Revision',      duration: '10:15', free: false },
-]
+const formatPrice = (price) => {
+  if (typeof price === 'string' && price.startsWith('$')) return price
+  const numeric = Number(price)
+  return Number.isFinite(numeric) ? `$${numeric.toFixed(2)}` : '$0.00'
+}
 
-// ── Code-unlock modal ──────────────────────────────────────────────────────
+const mapCourse = (course) => ({
+  ...course,
+  lessons: Number(course.lessons ?? 0),
+  duration: course.duration || '0h 0m',
+  price: formatPrice(course.price),
+  color: course.color || '#042a4e',
+})
+
+const mapVideo = (video, index) => ({
+  id: video.id,
+  title: video.title || `Video ${index + 1}`,
+  duration: video.duration || '0m 0s',
+  free: Number(video.price) === 0 || index === 0,
+})
+
 const UnlockModal = ({ target, onClose, onUnlock }) => {
   const [code, setCode]       = useState('')
   const [error, setError]     = useState('')
@@ -126,13 +134,89 @@ const VideoPlayer = ({ topic, unlocked, onRequestUnlock, courseColor }) => {
 const CourseDetailPage = () => {
   const { id }   = useParams()
   const navigate = useNavigate()
-  const course   = courses.find(c => String(c.id) === String(id))
-
-  const [topics]                            = useState(() => course ? generateTopics() : [])
-  const [activeTopic, setActiveTopic]       = useState(topics[0] || null)
-  const [unlockedTopics, setUnlockedTopics] = useState(new Set([1]))
+  const [course, setCourse] = useState(null)
+  const [topics, setTopics] = useState([])
+  const [activeTopic, setActiveTopic] = useState(null)
+  const [unlockedTopics, setUnlockedTopics] = useState(new Set())
   const [fullCourseUnlocked, setFullCourseUnlocked] = useState(false)
-  const [modal, setModal]                   = useState(null)
+  const [modal, setModal] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState('')
+
+  useEffect(() => {
+    let cancelled = false
+
+    const loadCourseDetails = async () => {
+      try {
+        setLoading(true)
+        setFetchError('')
+        setCourse(null)
+        setTopics([])
+        setActiveTopic(null)
+        setUnlockedTopics(new Set())
+        setFullCourseUnlocked(false)
+
+        const res = await fetch(`${API_BASE_URL}/api/courses/${id}`)
+        if (!res.ok) {
+          throw new Error(`Failed to fetch course details (${res.status})`)
+        }
+
+        const data = await res.json()
+        if (!data?.course) {
+          throw new Error('Invalid course payload')
+        }
+
+        const normalizedCourse = mapCourse(data.course)
+        const normalizedTopics = Array.isArray(data.videos)
+          ? data.videos.map(mapVideo)
+          : []
+
+        if (!cancelled) {
+          setCourse(normalizedCourse)
+          setTopics(normalizedTopics)
+          if (normalizedTopics.length > 0) {
+            setActiveTopic(normalizedTopics[0])
+            setUnlockedTopics(new Set([normalizedTopics[0].id]))
+          }
+        }
+      } catch (error) {
+        console.error(error)
+        if (!cancelled) {
+          setFetchError('Failed to load course details.')
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false)
+        }
+      }
+    }
+
+    loadCourseDetails()
+
+    return () => {
+      cancelled = true
+    }
+  }, [id])
+
+  if (loading) {
+    return (
+      <div className="cdp-not-found">
+        <p className="cdp-not-found__text">Loading course details...</p>
+      </div>
+    )
+  }
+
+  if (fetchError) {
+    return (
+      <div className="cdp-not-found">
+        <p className="cdp-not-found__emoji">⚠️</p>
+        <p className="cdp-not-found__text">{fetchError}</p>
+        <button className="cdp-not-found__btn" onClick={() => navigate('/courses')}>
+          ← Back to Courses
+        </button>
+      </div>
+    )
+  }
 
   if (!course) {
     return (
@@ -163,7 +247,7 @@ const CourseDetailPage = () => {
   }
 
   const completedCount = topics.filter(t => isTopicUnlocked(t)).length
-  const progressClass = `cdp-progress__fill--${completedCount}`
+  const progressPct = topics.length > 0 ? (completedCount / topics.length) * 100 : 0
 
   return (
     <div className="cdp-page">
@@ -219,7 +303,7 @@ const CourseDetailPage = () => {
               <span className="cdp-progress__label">{completedCount} / {topics.length} unlocked</span>
             </div>
             <div className="cdp-progress__track">
-              <div className={`cdp-progress__fill ${progressClass}`} />
+              <div className="cdp-progress__fill" style={{ width: `${progressPct}%` }} />
             </div>
           </div>
         </div>
