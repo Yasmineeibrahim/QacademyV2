@@ -1,16 +1,37 @@
 // src/pages/CoursesPage.jsx
-import React, { useState } from 'react'
-import { courses, SEMESTERS, MAJORS }   from '../../assets/data/courses'
+import React, { useMemo, useState, useEffect } from 'react'
 import CourseCard    from '../../components/coursecard/Coursecard'
 import PageHeader    from '../../components/pageheader/Pageheader'
 import SearchBar     from '../../components/searchBar/Searchbar'
 import FilterSidebar from '../../components/sidebar/Filtersidebar'
+import { API_BASE_URL } from '../../config/api'
 import './coursesPage.css'
 
 const CoursesPage = () => {
+  const [courses, setCourses] = useState([])
   const [searchVal, setSearchVal] = useState('')
   const [semester, setSemester]   = useState(null)
   const [major, setMajor]         = useState('All')
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/courses`)
+      .then((res) => res.json())
+      .then((data) => setCourses(Array.isArray(data) ? data : []))
+      .catch((err) => {
+        console.error(err)
+        setCourses([])
+      })
+  }, [])
+
+  const semesters = useMemo(
+    () => [...new Set(courses.map((c) => Number(c.semester)).filter((n) => Number.isFinite(n) && n > 0))].sort((a, b) => a - b),
+    [courses]
+  )
+
+  const majors = useMemo(
+    () => ['All', ...new Set(courses.map((c) => c.major).filter(Boolean).filter((m) => m !== 'All'))],
+    [courses]
+  )
 
   const filtered = courses.filter(c => {
     const matchSearch   = c.title.toLowerCase().includes(searchVal.toLowerCase()) ||
@@ -38,6 +59,8 @@ const CoursesPage = () => {
             major={major}
             onSemesterChange={setSemester}
             onMajorChange={setMajor}
+            semesters={semesters}
+            majors={majors}
           />
         </div>
 
@@ -56,7 +79,7 @@ const CoursesPage = () => {
                 }}
               >
                 <option value="all">All Semesters</option>
-                {SEMESTERS.map((s) => (
+                {semesters.map((s) => (
                   <option key={s} value={String(s)}>Semester {s}</option>
                 ))}
               </select>
@@ -70,7 +93,7 @@ const CoursesPage = () => {
                 value={major}
                 onChange={(e) => setMajor(e.target.value)}
               >
-                {MAJORS.map((m) => (
+                {majors.map((m) => (
                   <option key={m} value={m}>{m === 'All' ? 'All Majors' : `${m} Eng.`}</option>
                 ))}
               </select>

@@ -1,24 +1,22 @@
 // src/components/coursesection.jsx
 import React, { useState, useEffect } from 'react'
-import { courses } from '../../assets/data/courses'
 import CourseCard from '../coursecard/Coursecard'
 import './coursesection.css'
-
-function getVisible() {
-  if (typeof window === 'undefined') return 3
-  if (window.innerWidth < 640)  return 1
-  if (window.innerWidth < 1024) return 2
-  return 3
-}
+import { API_BASE_URL } from '../../config/api'
 
 const CoursesSection = () => {
-  const [index, setIndex]     = useState(0)
-  const [visible, setVisible] = useState(getVisible())
+  const [courses, setCourses] = useState([])
+  const [index, setIndex] = useState(0)
+  const visible = 3
 
   useEffect(() => {
-    const handleResize = () => setVisible(getVisible())
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    fetch(`${API_BASE_URL}/api/courses`)
+      .then(res => res.json())
+      .then(data => setCourses(Array.isArray(data) ? data : []))
+      .catch(err => {
+        console.error(err)
+        setCourses([])
+      })
   }, [])
 
   const maxIndex = courses.length - visible
