@@ -27,46 +27,34 @@ const EducatorCard = ({ educator }) => {
 
         {/* Name & role — hidden on hover */}
         <div className={`educator-card__summary ${hovered ? 'educator-card__summary--hidden' : 'educator-card__summary--visible'}`}>
-          <p className="educator-card__name">
-            {educator.name}
-          </p>
-          <p className="educator-card__role">
-            {educator.role}
-          </p>
+          <p className="educator-card__name">{educator.name}</p>
+          <p className="educator-card__role">{educator.role}</p>
         </div>
 
         {/* Hover overlay */}
         <div className={`educator-card__overlay ${hovered ? 'educator-card__overlay--visible' : 'educator-card__overlay--hidden'}`}>
-          <p className="educator-card__overlay-name">
-            {educator.name}
-          </p>
-          <span className="educator-card__overlay-role">
-            {educator.role}
-          </span>
-          <p className="educator-card__overlay-desc">
-            {educator.description}
-          </p>
-          <div className="educator-card__stats">
-            <div className="educator-card__stat">
-              <p className="educator-card__stat-value">
-                {educator.courses}
-              </p>
-              <p className="educator-card__stat-label">
-                Courses
-              </p>
-            </div>
-            <div className="educator-card__divider" />
-            <div className="educator-card__stat">
-              <p className="educator-card__stat-value">
-                {educator.students.toLocaleString()}
-              </p>
-              <p className="educator-card__stat-label">
-                Students
-              </p>
+
+          {/* 1. Pinned top: name + role */}
+          <div className="educator-card__overlay-header">
+            <p className="educator-card__overlay-name">{educator.name}</p>
+            <span className="educator-card__overlay-role">{educator.role}</span>
+          </div>
+
+          {/* 2. Description — clamped to 3 lines, never grows */}
+          <p className="educator-card__overlay-desc">{educator.description}</p>
+
+          {/* 3. Spacer — absorbs leftover space */}
+          <div className="educator-card__overlay-spacer" />
+
+          {/* 4. Pinned bottom: stats always visible */}
+          <div className="educator-card__overlay-bottom">
+            <div className="educator-card__overlay-line" />
+            <div className="educator-card__stats">
+             
             </div>
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
   )

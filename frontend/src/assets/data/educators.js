@@ -3,28 +3,33 @@
 export const educators = [
   {
     id: 1,
-    name: 'Dr. Sarah Ahmed',
-    initials: 'SA',
-    role: 'Calculus & Analysis',
+    name: 'Eng. Youssef Ahmed',
+    initials: 'YA',
+    role: 'Mechanical Engineer',
     color: '#042a4e',
     accent: '#fff613',
     description:
-      'PhD in Applied Mathematics from Cairo University. 12+ years teaching calculus and real analysis. Published researcher with a passion for making complex theory feel intuitive for engineering students.',
+      'Top-ranked student across all branches of AAST in Mechanical Engineering, with a cumulative GPA of 3.97.Youssef is recognized as one of the top engineers in his field, achieving exceptional academic results throughout his years of study.'
+
+,
     courses: 3,
     students: 1240,
   },
   {
     id: 2,
-    name: 'Prof. Omar Hassan',
-    initials: 'OH',
-    role: 'Linear Algebra',
+    name: 'Eng. Yasmine Ibrahim',
+    initials: 'YI',
+    role: 'Computer Engineer ',
     color: '#1a4a7a',
     accent: '#fff613',
     description:
-      'Professor of Mathematics with 15 years at the Faculty of Engineering. Specialises in matrix theory and its applications in computer graphics, structural analysis, and data science.',
+      'A top performing Computer Engineering graduate from AAST , with a cumulative GPA of 3.8, ranking among the top 5 students across her major.Yasmine specializes in web development and mobile application programming She is known for delivering clear, practical explanations.'
+
+       ,
     courses: 2,
     students: 980,
   },
+
   {
     id: 3,
     name: 'Dr. Layla Nasser',

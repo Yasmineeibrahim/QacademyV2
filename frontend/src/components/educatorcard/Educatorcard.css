@@ -115,6 +115,7 @@
   text-transform: uppercase;
 }
 
+/* ── Overlay: fixed layout with pinned header and footer ── */
 .educator-card__overlay {
   position: absolute;
   inset: 0;
@@ -123,10 +124,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 28px 22px;
+  justify-content: space-between; /* pushes header to top, stats to bottom */
+  padding: 24px 22px 20px;
   transition: opacity 0.35s ease, transform 0.35s ease;
-  gap: 14px;
   z-index: 2;
 }
 
@@ -140,11 +140,22 @@
   transform: translateY(0);
 }
 
+/* Top section: name + role badge — always at the top */
+.educator-card__overlay-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  width: 100%;
+}
+
 .educator-card__overlay-name {
   font-family: 'Archivo Black', sans-serif;
   font-size: 1rem;
   color: #ffffff;
   text-align: center;
+  margin: 0;
 }
 
 .educator-card__overlay-role {
@@ -158,37 +169,19 @@
   border-radius: 20px;
 }
 
+/* Middle section: description — grows to fill available space, clips if too long */
 .educator-card__overlay-desc {
-  font-size: 13px;
+  font-size: 12.5px;
   color: rgba(255, 255, 255, 0.75);
-  line-height: 1.65;
+  line-height: 1.6;
   text-align: center;
+  flex: 1;
+  overflow: hidden;
+  display: -webkit-box;    
+  -webkit-box-orient: vertical;
+  margin: 10px 0;
+  width: 100%;
 }
 
-.educator-card__stats {
-  display: flex;
-  gap: 20px;
-  margin-top: 4px;
-}
 
-.educator-card__stat {
-  text-align: center;
-}
 
-.educator-card__stat-value {
-  font-family: 'Archivo Black', sans-serif;
-  font-size: 1.1rem;
-  color: #fff613;
-}
-
-.educator-card__stat-label {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.5);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.educator-card__divider {
-  width: 1px;
-  background: rgba(255, 255, 255, 0.1);
-}

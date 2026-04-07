@@ -85,8 +85,7 @@ const UnlockModal = ({ target, onClose, onUnlock }) => {
           </button>
 
           <p className="cdp-modal__hint">
-            Don't have a code? Contact your instructor or visit our{' '}
-            <a href="/contact">support page</a>.
+            Don't have a code? Contact us 
           </p>
         </div>
       </div>
