@@ -564,7 +564,7 @@ const AdminControlPage = () => {
           <div className="acp-sidebar__title">Admin Panel</div>
         </div>
         <nav className="acp-sidebar__nav">
-          {NAV.map((item, i) => (
+          {NAV.map((item) => (
             <React.Fragment key={item.key}>
               {item.section && <div className="acp-nav-section">{item.section}</div>}
               <button

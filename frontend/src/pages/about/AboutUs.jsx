@@ -71,8 +71,8 @@ const AboutUs = () => {
           <span>Why We Exist</span>
         </h1>
         <p>
-          A team of engineers and educators on a mission to make first-year university
-          courses finally click — for every student, everywhere.
+          A team of engineers and educators on a mission to make engineering 
+          courses finally click ; for every student and everywhere.
         </p>
       </div>
 
@@ -90,19 +90,19 @@ const AboutUs = () => {
           <div className="au-background__grid">
             {[
               {
-                year: '2019',
+                year: '2024',
                 title: 'The Problem',
-                text: 'A group of Cairo University engineering students struggled through first-year courses with outdated materials and overcrowded lectures. They knew there had to be a better way.',
+                text: 'A group of engineering students struggled through engineering courses with outdated materials and overcrowded lectures. They knew there had to be a better way.',
               },
               {
-                year: '2021',
+                year: '2025',
                 title: 'The Experiment',
-                text: 'A handful of top graduates started recording supplementary explanation videos for their juniors. Within weeks, thousands of students were watching and sharing them.',
+                text: 'A handful of top graduates started recording supplementary explanation videos . Within weeks, hundreds of students were watching and sharing them.',
               },
               {
-                year: '2023',
+                year: '2026',
                 title: 'The Platform',
-                text: 'What began as a shared Google Drive folder evolved into a structured learning platform — with vetted educators, organised courses, and a growing community of engineers.',
+                text: 'What began as a shared messy Google Drive folder evolved into a structured learning platform — with vetted educators, organised courses, and a growing community of engineers.',
               },
             ].map((item, i) => (
               <FadeSection key={i} delay={i * 0.12}>
@@ -125,7 +125,7 @@ const AboutUs = () => {
             <SectionHeading
               badge="Origins"
               title="How We Started"
-              subtitle="From a dorm room conversation to thousands of students."
+              subtitle="From a dorm room conversation to real learning experiences."
             />
           </FadeSection>
 
@@ -134,9 +134,9 @@ const AboutUs = () => {
             <FadeSection>
               <div className="au-timeline">
                 {[
-                  { step: '01', label: 'The Idea', desc: 'Three engineering graduates decided to record the explanations they wish they had received as students.' },
-                  { step: '02', label: 'First Educators', desc: 'They recruited five more specialists — each an expert in a core first-year subject.' },
-                  { step: '03', label: 'Community Grows', desc: 'Students shared the videos organically. 500 viewers became 5,000 in under three months.' },
+                  { step: '01', label: 'The Idea', desc: 'A group of top graduates decided to record the explanations they wish they had received as students.' },
+                  { step: '02', label: 'First Educators', desc: 'They started recording explanation videos by themselves and simultaneously started developing the platform.' },
+                  { step: '03', label: 'Community Grows', desc: 'Students shared the videos organically. 500 viewers became 5,000 .' },
                   { step: '04', label: 'Platform Launch', desc: 'With proper structure, enrollment, and feedback loops, the platform officially launched.' },
                 ].map((item, i, arr) => (
                   <div key={i} className="au-timeline__item">
@@ -249,9 +249,9 @@ const AboutUs = () => {
               {
                 title: 'Academic Integrity',
                 rules: [
-                  'All course content is original and educator-owned.',
+                  'All course content is original and platform-owned.',
                   'Sharing or redistributing videos without permission is prohibited.',
-                  'Plagiarism or misrepresentation will result in account removal.',
+                  'Plagiarism or misrepresentation will result in account removal and will face legal consequences.',
                 ],
               },
               {
@@ -274,8 +274,8 @@ const AboutUs = () => {
                 title: 'Enrolment & Refunds',
                 rules: [
                   'Course access begins immediately upon successful enrolment.',
-                  'Refund requests must be submitted within 7 days of purchase.',
-                  'Courses completed more than 50% are not eligible for refund.',
+                  ' Refunds is not available upon successful enrolment.',
+                  'For any issues with access or content, contact support team immediately.',
                 ],
               },
               {

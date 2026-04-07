@@ -4,10 +4,27 @@ import CourseCard from '../coursecard/Coursecard'
 import './coursesection.css'
 import { API_BASE_URL } from '../../config/api'
 
+const useVisibleCount = () => {
+  const getCount = () => {
+    if (window.innerWidth < 480) return 1
+    if (window.innerWidth < 768) return 2
+    return 3
+  }
+  const [count, setCount] = useState(getCount)
+
+  useEffect(() => {
+    const handleResize = () => setCount(getCount())
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  return count
+}
+
 const CoursesSection = () => {
   const [courses, setCourses] = useState([])
   const [index, setIndex] = useState(0)
-  const visible = 3
+  const visible = useVisibleCount()
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/courses`)
@@ -19,14 +36,15 @@ const CoursesSection = () => {
       })
   }, [])
 
-  const maxIndex = courses.length - visible
+  const maxIndex = Math.max(0, courses.length - visible)
 
-
+  // Ensure index doesn't exceed maxIndex when visible changes
+  const safeIndex = Math.min(index, maxIndex)
 
   const prev = () => setIndex(i => Math.max(0, i - 1))
   const next = () => setIndex(i => Math.min(maxIndex, i + 1))
 
-  const visibleCourses = courses.slice(index, index + visible)
+  const visibleCourses = courses.slice(safeIndex, safeIndex + visible)
 
   return (
     <section className="courses-section">
@@ -41,6 +59,7 @@ const CoursesSection = () => {
           <button
             className={`slider-arrow${index === 0 ? ' slider-arrow--disabled' : ''}`}
             onClick={prev}
+            disabled={index === 0}
             aria-label="Previous"
           >‹</button>
 
@@ -51,8 +70,9 @@ const CoursesSection = () => {
           </div>
 
           <button
-            className={`slider-arrow${index === maxIndex ? ' slider-arrow--disabled' : ''}`}
+            className={`slider-arrow${index >= maxIndex ? ' slider-arrow--disabled' : ''}`}
             onClick={next}
+            disabled={index >= maxIndex}
             aria-label="Next"
           >›</button>
 
