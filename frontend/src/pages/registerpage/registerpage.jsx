@@ -4,6 +4,7 @@ import './registerpage.css'
 import { useState } from "react";
 import axios from "axios";
 import { API_BASE_URL } from '../../config/api'
+import RegisterStatus from '../../components/registerStatus/RegisterStatus'
 
 const registerpage = () => {
    const [form, setForm] = useState({
@@ -15,6 +16,8 @@ const registerpage = () => {
     phone_number: ""
   });
 
+  const [status, setStatus] = useState(null);
+
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -22,11 +25,15 @@ const registerpage = () => {
     });
   };
 
+  const clearStatus = () => {
+    setStatus(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (form.password !== form.confirmPassword) {
-      alert("Passwords do not match");
+      setStatus({ type: 'error', message: 'Passwords do not match' });
       return;
     }
 
@@ -39,12 +46,12 @@ const registerpage = () => {
       );
 
       console.log(res.data);
-      alert("Account created successfully");
+      setStatus({ type: 'success', message: 'Account created successfully' });
 
     } catch (err) {
       console.error(err);
       const apiMessage = err?.response?.data?.message;
-      alert(apiMessage || "Error creating account");
+      setStatus({ type: 'error', message: apiMessage || 'Error creating account' });
     }
   };
   return (
@@ -65,6 +72,11 @@ const registerpage = () => {
       />
 
       <div className="register-content">
+        <RegisterStatus
+          type={status?.type}
+          message={status?.message}
+          onClose={clearStatus}
+        />
         <div className="register-panel">
           <h1>Create Account</h1>
           <p>Join QAcademy and start building your engineering path.</p>
