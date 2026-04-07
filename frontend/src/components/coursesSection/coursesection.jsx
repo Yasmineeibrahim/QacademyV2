@@ -36,17 +36,15 @@ const CoursesSection = () => {
       })
   }, [])
 
-  // Reset index when visible count changes to avoid out-of-bounds
-  useEffect(() => {
-    setIndex(0)
-  }, [visible])
-
   const maxIndex = Math.max(0, courses.length - visible)
+
+  // Ensure index doesn't exceed maxIndex when visible changes
+  const safeIndex = Math.min(index, maxIndex)
 
   const prev = () => setIndex(i => Math.max(0, i - 1))
   const next = () => setIndex(i => Math.min(maxIndex, i + 1))
 
-  const visibleCourses = courses.slice(index, index + visible)
+  const visibleCourses = courses.slice(safeIndex, safeIndex + visible)
 
   return (
     <section className="courses-section">
