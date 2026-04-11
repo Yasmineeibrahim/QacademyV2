@@ -35,7 +35,7 @@ const VideoRow = ({ video, maxStudents }) => {
       {/* Info */}
       <div className="ecp-video-row__info">
         <div className={`ecp-video-row__num ${video.free ? 'ecp-video-row__num--free' : ''}`}>
-          {video.id}
+          {video.order}
         </div>
         <div style={{ minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -96,7 +96,7 @@ const EducatorCourseCard = ({ course }) => {
           <div className="ecp-course-card__info">
             <div className="ecp-course-card__badges">
               <span className="ecp-badge ecp-badge--category">{course.category}</span>
-              <span className="ecp-badge ecp-badge--semester">Semester {course.semester}</span>
+              <span className="ecp-badge ecp-badge--semester">Semester {course.semester || '—'}</span>
               <span className={`ecp-badge ${course.status === 'active' ? 'ecp-badge--active' : 'ecp-badge--draft'}`}>
                 {course.status === 'active' ? '● Active' : '○ Draft'}
               </span>
@@ -201,23 +201,29 @@ const EducatorCoursePage = () => {
         const data = await res.json()
         const mapped = (Array.isArray(data) ? data : []).map((course) => {
           const videos = (Array.isArray(course.videos) ? course.videos : []).map((video, index) => ({
-            id: video.order_index ?? index + 1,
+            id: video.id ?? `${course.id}-${index + 1}`,
+            order: Number(video.order_index) || index + 1,
             title: video.title || `Video ${index + 1}`,
             duration: video.duration || '0m 0s',
             free: Number(video.price) === 0,
             students: Number(video.students || 0),
           }))
 
+          const lessons = videos.length > 0
+            ? videos.length
+            : Number(course.lessons || 0)
+          const students = Number(course.students || 0)
+
           return new EducatorCourse({
             id: course.id,
             title: course.title,
             category: course.category,
             color: course.color,
-            semester: Number(course.semester || 0),
-            lessons: Number(course.lessons || videos.length),
+            semester: course.semester,
+            lessons,
             duration: course.duration || '0h 0m',
-            students: Number(course.students || 0),
-            status: Number(course.lessons || 0) > 0 ? 'active' : 'draft',
+            students,
+            status: lessons > 0 ? 'active' : 'draft',
             videos,
           })
         })

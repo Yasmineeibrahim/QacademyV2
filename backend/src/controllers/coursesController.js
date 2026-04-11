@@ -64,6 +64,19 @@ export const getCoursesByEducatorId = async (req, res) => {
           c.title,
           c.semester,
           c.videos_count AS lessons,
+          (
+            SELECT COUNT(DISTINCT student_id)
+            FROM (
+              SELECT e.student_id
+              FROM enrollments e
+              WHERE e.course_id = c.id
+              UNION
+              SELECT vp.student_id
+              FROM video_purchases vp
+              INNER JOIN videos v2 ON v2.id = vp.video_id
+              WHERE v2.course_id = c.id
+            ) AS course_access
+          ) AS students,
           CONCAT(
             FLOOR(c.total_duration_minutes / 60), 'h ',
             MOD(c.total_duration_minutes, 60), 'm'
@@ -101,7 +114,19 @@ export const getCoursesByEducatorId = async (req, res) => {
             duration AS duration_seconds,
             price,
             video_url,
-            order_index
+            order_index,
+            (
+              SELECT COUNT(DISTINCT student_id)
+              FROM (
+                SELECT e.student_id
+                FROM enrollments e
+                WHERE e.course_id = videos.course_id
+                UNION
+                SELECT vp.student_id
+                FROM video_purchases vp
+                WHERE vp.video_id = videos.id
+              ) AS video_access
+            ) AS students
           FROM videos
           WHERE course_id IN (${placeholders})
           ORDER BY course_id ASC, order_index ASC

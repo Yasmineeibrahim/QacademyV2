@@ -137,7 +137,16 @@ export class EducatorCoursesAnalytics {
     const items = [...courses]
     return items.sort((a, b) => {
       if (sortKey === 'students') return b.students - a.students
-      if (sortKey === 'semester') return a.semester - b.semester
+      if (sortKey === 'semester') {
+        const aSem = Number(a.semester)
+        const bSem = Number(b.semester)
+
+        if (Number.isFinite(aSem) && Number.isFinite(bSem)) {
+          return aSem - bSem
+        }
+
+        return String(a.semester || '').localeCompare(String(b.semester || ''))
+      }
       if (sortKey === 'title') return a.title.localeCompare(b.title)
       return 0
     })
