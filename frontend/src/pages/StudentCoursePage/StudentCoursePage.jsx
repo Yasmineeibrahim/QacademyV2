@@ -44,7 +44,6 @@ const toCoursePurchaseCard = (purchase, index) => ({
   completedLessons: Math.max(1, Math.min(Number(purchase.lessons) || 8, 6)),
   progressPercent: 75,
   progressLabel: 'In Progress',
-  progressNote: 'Keep going to unlock the remaining lessons',
   accessLevel: 'Full course access',
   lastAccessed: '2 hours ago',
   nextLesson: 'Lesson 6 • Practice Session',
@@ -121,7 +120,7 @@ const PurchasedCourseCard = ({ course }) => {
           />
         </div>
         <p className="scp-card__progress-lessons">
-          {course.completedLessons} of {course.lessons} lessons unlocked • {course.progressNote}
+          {course.completedLessons} of {course.lessons} lessons completed 
         </p>
       </div>
 
@@ -174,7 +173,7 @@ const PurchasedVideoCard = ({ video }) => {
           />
         </div>
         <p className="scp-card__progress-lessons">
-          {video.completedLessons} of {video.lessons} lessons unlocked • {video.progressNote}
+          {video.completedLessons} of {video.lessons} lessons completed
         </p>
       </div>
 
