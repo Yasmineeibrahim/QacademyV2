@@ -13,6 +13,40 @@ const toInitials = (firstName = '', lastName = '', email = '') => {
   return (email?.[0] || 'E').toUpperCase()
 }
 
+const durationToSeconds = (value) => {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return Math.max(0, Math.round(value))
+  }
+
+  if (typeof value !== 'string') return 0
+
+  const trimmed = value.trim().toLowerCase()
+  const hours = Number((trimmed.match(/(\d+)\s*h/) || [])[1] || 0)
+  const minutes = Number((trimmed.match(/(\d+)\s*m(?!\s*s)/) || [])[1] || 0)
+  const seconds = Number((trimmed.match(/(\d+)\s*s/) || [])[1] || 0)
+
+  if (hours || minutes || seconds) {
+    return hours * 3600 + minutes * 60 + seconds
+  }
+
+  return 0
+}
+
+const formatSeconds = (value) => {
+  const totalSeconds = durationToSeconds(value)
+  if (!totalSeconds) return '0m 0s'
+
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`
+  }
+
+  return `${minutes}m ${seconds}s`
+}
+
 const SORTS = [
   { key: 'default',  label: 'Default'   },
   { key: 'students', label: 'Students ↓' },
@@ -21,9 +55,7 @@ const SORTS = [
 ]
 
 const TABS = [
-  { key: 'all',    label: 'All Courses' },
-  { key: 'active', label: 'Active'      },
-  { key: 'draft',  label: 'Draft'       },
+  { key: 'all', label: 'All Courses' },
 ]
 
 const VideoRow = ({ video, maxStudents }) => {
@@ -213,6 +245,13 @@ const EducatorCoursePage = () => {
             ? videos.length
             : Number(course.lessons || 0)
           const students = Number(course.students || 0)
+          const totalDurationSeconds = videos.reduce(
+            (sum, video) => sum + durationToSeconds(video.duration),
+            0
+          )
+          const duration = totalDurationSeconds > 0
+            ? formatSeconds(totalDurationSeconds)
+            : (course.duration || '0h 0m')
 
           return new EducatorCourse({
             id: course.id,
@@ -221,7 +260,7 @@ const EducatorCoursePage = () => {
             color: course.color,
             semester: course.semester,
             lessons,
-            duration: course.duration || '0h 0m',
+            duration,
             students,
             status: lessons > 0 ? 'active' : 'draft',
             videos,
@@ -242,7 +281,7 @@ const EducatorCoursePage = () => {
 
   const filtered = EducatorCoursesAnalytics.filterByTab(educatorCourses, tab)
   const sorted = EducatorCoursesAnalytics.sortCourses(filtered, sort)
-  const { totalStudents, totalCourses, activeCourses, totalVideos } =
+  const { totalStudents, totalCourses, totalVideos } =
     EducatorCoursesAnalytics.getAggregateStats(educatorCourses)
   const tabCounts = EducatorCoursesAnalytics.getTabCounts(educatorCourses)
 
@@ -268,10 +307,6 @@ const EducatorCoursePage = () => {
             <div className="ecp-kpi">
               <span className="ecp-kpi__num">{totalCourses}</span>
               <span className="ecp-kpi__label">Courses</span>
-            </div>
-            <div className="ecp-kpi">
-              <span className="ecp-kpi__num">{activeCourses}</span>
-              <span className="ecp-kpi__label">Active</span>
             </div>
             <div className="ecp-kpi">
               <span className="ecp-kpi__num">{totalVideos}</span>
