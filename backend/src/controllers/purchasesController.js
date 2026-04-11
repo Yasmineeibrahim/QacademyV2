@@ -103,10 +103,48 @@ export const getStudentEnrollments = async (req, res) => {
       [studentId]
     );
 
+    let videosByCourseId = {};
+
+    if (rows.length > 0) {
+      const courseIds = rows.map((row) => row.course_id);
+      const placeholders = courseIds.map(() => "?").join(", ");
+
+      const [videoRows] = await db.promise().query(
+        `
+          SELECT
+            id,
+            course_id,
+            title,
+            duration,
+            order_index,
+            video_url
+          FROM videos
+          WHERE course_id IN (${placeholders})
+          ORDER BY course_id ASC, order_index ASC
+        `,
+        courseIds
+      );
+
+      videosByCourseId = videoRows.reduce((acc, video) => {
+        const courseId = video.course_id;
+        if (!acc[courseId]) {
+          acc[courseId] = [];
+        }
+
+        acc[courseId].push({
+          ...video,
+          duration: formatDuration(video.duration),
+        });
+
+        return acc;
+      }, {});
+    }
+
     return res.json(
       rows.map((row) => ({
         ...row,
         duration: formatDuration(row.duration),
+        videos: videosByCourseId[row.course_id] || [],
       }))
     );
   } catch (err) {
@@ -181,6 +219,7 @@ export const getStudentVideoPurchases = async (req, res) => {
           v.title AS video_title,
           v.description AS video_description,
           v.duration AS raw_duration,
+          v.video_url,
           CONCAT('$', v.price) AS video_price,
           v.order_index,
           c.id AS course_id,
@@ -257,6 +296,7 @@ export const getStudentPurchases = async (req, res) => {
             v.title AS video_title,
             v.description AS video_description,
             v.duration AS raw_duration,
+            v.video_url,
             CONCAT('$', v.price) AS video_price,
             v.order_index,
             c.id AS course_id,
@@ -276,9 +316,47 @@ export const getStudentPurchases = async (req, res) => {
       ),
     ]);
 
+    let videosByCourseId = {};
+
+    if (enrollments[0].length > 0) {
+      const courseIds = enrollments[0].map((row) => row.course_id);
+      const placeholders = courseIds.map(() => "?").join(", ");
+
+      const [courseVideoRows] = await db.promise().query(
+        `
+          SELECT
+            id,
+            course_id,
+            title,
+            duration,
+            order_index,
+            video_url
+          FROM videos
+          WHERE course_id IN (${placeholders})
+          ORDER BY course_id ASC, order_index ASC
+        `,
+        courseIds
+      );
+
+      videosByCourseId = courseVideoRows.reduce((acc, video) => {
+        const courseId = video.course_id;
+        if (!acc[courseId]) {
+          acc[courseId] = [];
+        }
+
+        acc[courseId].push({
+          ...video,
+          duration: formatDuration(video.duration),
+        });
+
+        return acc;
+      }, {});
+    }
+
     const enrollmentRows = enrollments[0].map((row) => ({
       ...row,
       duration: formatDuration(row.duration),
+      videos: videosByCourseId[row.course_id] || [],
     }));
 
     const videoPurchaseRows = videoPurchases[0].map((row) => ({

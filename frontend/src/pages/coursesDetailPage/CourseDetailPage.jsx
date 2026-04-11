@@ -26,7 +26,51 @@ const mapVideo = (video, index) => ({
   title: video.title || `Video ${index + 1}`,
   duration: video.duration || '0m 0s',
   free: Number(video.price) === 0 || index === 0,
+  videoUrl: video.video_url || '',
 })
+
+const toYouTubeEmbedUrl = (url) => {
+  if (!url) return ''
+
+  const buildEmbedUrl = (videoId) => {
+    if (!videoId) return ''
+
+    const params = new URLSearchParams({
+      rel: '0',
+      modestbranding: '1',
+      iv_load_policy: '3',
+      playsinline: '1',
+    })
+
+    return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`
+  }
+
+  try {
+    const parsed = new URL(url)
+    const host = parsed.hostname.replace('www.', '')
+
+    if (host === 'youtu.be') {
+      const id = parsed.pathname.replace('/', '')
+      return buildEmbedUrl(id)
+    }
+
+    if (host === 'youtube.com' || host === 'm.youtube.com') {
+      if (parsed.pathname === '/watch') {
+        const id = parsed.searchParams.get('v')
+        return buildEmbedUrl(id)
+      }
+
+      if (parsed.pathname.startsWith('/embed/')) {
+        const id = parsed.pathname.split('/embed/')[1]
+        return buildEmbedUrl(id)
+      }
+    }
+
+    return ''
+  } catch {
+    return ''
+  }
+}
 
 const UnlockModal = ({ target, onClose, onUnlock }) => {
   const [code, setCode]       = useState('')
@@ -119,12 +163,28 @@ const VideoPlayer = ({ topic, unlocked, onRequestUnlock, courseColor }) => {
     )
   }
 
-  // Playing state — swap with real <video> or <iframe> later
+  const embedUrl = toYouTubeEmbedUrl(topic.videoUrl)
+
   return (
     <div className={`cdp-player cdp-player--playing ${getCourseColorClass(courseColor)}`}>
-      <div className="cdp-player__play-ring">▶</div>
-      <p className="cdp-player__now-playing">Now Playing</p>
-      <p className="cdp-player__playing-title">{topic.title}</p>
+      {embedUrl ? (
+        <iframe
+          className="cdp-player__iframe"
+          src={embedUrl}
+          title={topic.title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+        />
+      ) : topic.videoUrl ? (
+        <video className="cdp-player__video" src={topic.videoUrl} controls playsInline />
+      ) : (
+        <>
+          <div className="cdp-player__play-ring">▶</div>
+          <p className="cdp-player__now-playing">Now Playing</p>
+          <p className="cdp-player__playing-title">{topic.title}</p>
+        </>
+      )}
     </div>
   )
 }

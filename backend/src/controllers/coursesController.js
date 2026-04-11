@@ -99,6 +99,7 @@ export const getCoursesByEducatorId = async (req, res) => {
             description,
             duration,
             price,
+            video_url,
             order_index
           FROM videos
           WHERE course_id IN (${placeholders})
@@ -183,6 +184,7 @@ export const getCourseById = async (req, res) => {
           description,
           duration,
           price,
+          video_url,
           order_index
         FROM videos
         WHERE course_id = ?
