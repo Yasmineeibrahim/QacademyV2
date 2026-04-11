@@ -210,8 +210,11 @@ const CourseDetailPage = () => {
         const normalizedTopics = Array.isArray(data.videos)
           ? data.videos.map(mapVideo)
           : []
+        const requestedVideoId = Number(new URLSearchParams(location.search).get('videoId'))
+        const openedFromSingleVideo = Number.isInteger(requestedVideoId) && requestedVideoId > 0
 
         let hasFullCoursePurchase = false
+        let purchasedVideoIds = []
         const storedUserRaw = localStorage.getItem('user')
         if (storedUserRaw) {
           try {
@@ -223,6 +226,11 @@ const CourseDetailPage = () => {
                 hasFullCoursePurchase = (purchasesData.enrollments || []).some(
                   (enrollment) => Number(enrollment.course_id) === Number(id)
                 )
+
+                purchasedVideoIds = (purchasesData.videoPurchases || [])
+                  .filter((videoPurchase) => Number(videoPurchase.course_id) === Number(id))
+                  .map((videoPurchase) => Number(videoPurchase.video_id))
+                  .filter((videoId) => Number.isInteger(videoId) && videoId > 0)
               }
             }
           } catch (purchaseCheckErr) {
@@ -233,20 +241,26 @@ const CourseDetailPage = () => {
         if (!cancelled) {
           setCourse(normalizedCourse)
           setTopics(normalizedTopics)
-          setFullCourseUnlocked(hasFullCoursePurchase)
+          const effectiveFullCourseUnlocked = hasFullCoursePurchase && !openedFromSingleVideo
+          setFullCourseUnlocked(effectiveFullCourseUnlocked)
 
           if (normalizedTopics.length > 0) {
-            const requestedVideoId = Number(new URLSearchParams(location.search).get('videoId'))
             const requestedTopic = Number.isInteger(requestedVideoId)
               ? normalizedTopics.find((topic) => Number(topic.id) === requestedVideoId)
               : null
             const initialTopic = requestedTopic || normalizedTopics[0]
 
+            const singleVideoUnlockIds = new Set(
+              normalizedTopics
+                .filter((topic) => purchasedVideoIds.includes(Number(topic.id)))
+                .map((topic) => topic.id)
+            )
+
             setActiveTopic(initialTopic)
             setUnlockedTopics(
-              hasFullCoursePurchase
+              effectiveFullCourseUnlocked
                 ? new Set(normalizedTopics.map((topic) => topic.id))
-                : new Set([initialTopic.id])
+                : singleVideoUnlockIds
             )
           }
         }
