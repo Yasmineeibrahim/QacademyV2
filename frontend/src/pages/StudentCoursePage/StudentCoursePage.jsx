@@ -41,6 +41,13 @@ const toCoursePurchaseCard = (purchase, index) => ({
   price: purchase.price,
   lessons: purchase.lessons,
   courseId: purchase.course_id,
+  completedLessons: Math.max(1, Math.min(Number(purchase.lessons) || 8, 6)),
+  progressPercent: 75,
+  progressLabel: 'In Progress',
+  progressNote: 'Keep going to unlock the remaining lessons',
+  accessLevel: 'Full course access',
+  lastAccessed: '2 hours ago',
+  nextLesson: 'Lesson 6 • Practice Session',
 })
 
 const toVideoPurchaseCard = (purchase) => ({
@@ -50,11 +57,20 @@ const toVideoPurchaseCard = (purchase) => ({
   courseTitle: purchase.course_title,
   category: purchase.category,
   instructor: purchase.instructor,
+  initials: getInitials(purchase.instructor),
   duration: purchase.duration,
   purchasedAt: purchase.purchased_at,
   price: purchase.video_price,
   videoId: purchase.video_id,
   courseId: purchase.course_id,
+  color: '#1a4a7a',
+  lessons: 1,
+  completedLessons: 1,
+  progressPercent: 100,
+  progressLabel: 'Unlocked',
+  progressNote: 'Single video access',
+  accessLevel: 'Instant access',
+  videoTitle: purchase.video_title,
 })
 
 const formatPurchasedAt = (value) => {
@@ -87,17 +103,25 @@ const PurchasedCourseCard = ({ course }) => {
         <div className="scp-card__meta">
           <span className="scp-card__meta-item">🎥 {course.lessons} Videos</span>
           <span className="scp-card__meta-item">⏱ {course.duration}</span>
+          <span className="scp-card__meta-item">💳 {course.price}</span>
           <span className="scp-card__meta-item">🕐 {formatPurchasedAt(course.purchasedAt)}</span>
+          <span className="scp-card__meta-item">📍 {course.nextLesson}</span>
         </div>
       </div>
 
       <div className="scp-card__progress">
         <div className="scp-card__progress-header">
-          <span className="scp-card__progress-label">Purchase</span>
-          <span className="scp-card__progress-pct">{course.price}</span>
+          <span className="scp-card__progress-label">Progress</span>
+          <span className="scp-card__progress-pct">{course.progressPercent}%</span>
+        </div>
+        <div className="scp-card__progress-track">
+          <div
+            className="scp-card__progress-fill scp-card__progress-fill--high"
+            style={{ width: `${course.progressPercent}%` }}
+          />
         </div>
         <p className="scp-card__progress-lessons">
-          {course.semester ? `Semester ${course.semester} course` : 'Full course access'}
+          {course.completedLessons} of {course.lessons} lessons unlocked • {course.progressNote}
         </p>
       </div>
 
@@ -110,7 +134,7 @@ const PurchasedCourseCard = ({ course }) => {
           className="scp-card__continue-btn"
           onClick={() => navigate(`/courses/${course.courseId}`)}
         >
-          Open Course →
+          Continue Course →
         </button>
       </div>
     </div>
@@ -121,21 +145,51 @@ const PurchasedVideoCard = ({ video }) => {
   const navigate = useNavigate()
 
   return (
-    <div className="scp-video-card">
-      <div className="scp-video-card__top">
-        <span className="scp-video-card__tag">Single Video</span>
-        <span className="scp-video-card__price">{video.price}</span>
+    <div className="scp-card">
+      <div className={`scp-card__banner ${video.color === '#1a4a7a' ? 'scp-card__banner--blue' : 'scp-card__banner--dark'}`}>
+        <span className="scp-card__category">{video.category}</span>
+        <span className="scp-card__status-badge scp-card__status-badge--active">
+          Single Video
+        </span>
       </div>
-      <h3 className="scp-video-card__title">{video.title}</h3>
-      <p className="scp-video-card__course">From {video.courseTitle}</p>
-      <div className="scp-video-card__meta">
-        <span>🎥 {video.category}</span>
-        <span>⏱ {video.duration || 'Unlocked'}</span>
-        <span>🕐 {formatPurchasedAt(video.purchasedAt)}</span>
+
+      <div className="scp-card__body">
+        <h3 className="scp-card__title">{video.title}</h3>
+        <div className="scp-card__meta">
+          <span className="scp-card__meta-item">📘 {video.courseTitle}</span>
+          <span className="scp-card__meta-item">⏱ {video.duration || '18m'}</span>
+          <span className="scp-card__meta-item">🕐 {formatPurchasedAt(video.purchasedAt)}</span>
+        </div>
       </div>
-      <button className="scp-video-card__btn" onClick={() => navigate(`/courses/${video.courseId}`)}>
-        View Course →
-      </button>
+
+      <div className="scp-card__progress">
+        <div className="scp-card__progress-header">
+          <span className="scp-card__progress-label">Progress</span>
+          <span className="scp-card__progress-pct">{video.progressPercent}%</span>
+        </div>
+        <div className="scp-card__progress-track">
+          <div
+            className="scp-card__progress-fill scp-card__progress-fill--done"
+            style={{ width: `${video.progressPercent}%` }}
+          />
+        </div>
+        <p className="scp-card__progress-lessons">
+          {video.completedLessons} of {video.lessons} lessons unlocked • {video.progressNote}
+        </p>
+      </div>
+
+      <div className="scp-card__footer">
+        <div className="scp-card__instructor">
+          <div className="scp-card__avatar">{video.initials}</div>
+          <span className="scp-card__instructor-name">{video.instructor}</span>
+        </div>
+        <button
+          className="scp-card__continue-btn"
+          onClick={() => navigate(`/courses/${video.courseId}`)}
+        >
+          Open Video →
+        </button>
+      </div>
     </div>
   )
 }
