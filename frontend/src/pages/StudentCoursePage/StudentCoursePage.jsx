@@ -1,164 +1,141 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './StudentCoursePage.css'
-import { StudentCourse, StudentCoursesAnalytics } from '../../models/courseModels'
-
-const enrolledCourses = [
-  new StudentCourse({
-    id: 1,
-    title: 'Calculus I – Limits & Derivatives',
-    category: 'Mathematics',
-    instructor: 'Dr. Ahmed Nour',
-    initials: 'AN',
-    lessons: 8,
-    completedLessons: 6,
-    duration: '4h 20m',
-    color: '#042a4e',
-    semester: 1,
-    status: 'active',
-    lastAccessed: '2 hours ago',
-  }),
-  new StudentCourse({
-    id: 2,
-    title: 'Physics I – Mechanics & Motion',
-    category: 'Physics',
-    instructor: 'Dr. Sara Mahmoud',
-    initials: 'SM',
-    lessons: 8,
-    completedLessons: 8,
-    duration: '5h 10m',
-    color: '#1a4a7a',
-    semester: 1,
-    status: 'completed',
-    lastAccessed: '3 days ago',
-  }),
-  new StudentCourse({
-    id: 3,
-    title: 'Engineering Drawing & CAD Basics',
-    category: 'Drawing',
-    instructor: 'Eng. Omar Fathi',
-    initials: 'OF',
-    lessons: 8,
-    completedLessons: 2,
-    duration: '3h 45m',
-    color: '#042a4e',
-    semester: 1,
-    status: 'active',
-    lastAccessed: '1 day ago',
-  }),
-  new StudentCourse({
-    id: 4,
-    title: 'Introduction to Programming – C++',
-    category: 'CS',
-    instructor: 'Dr. Layla Hassan',
-    initials: 'LH',
-    lessons: 8,
-    completedLessons: 5,
-    duration: '6h 00m',
-    color: '#1a4a7a',
-    semester: 2,
-    status: 'active',
-    lastAccessed: '5 hours ago',
-  }),
-  new StudentCourse({
-    id: 5,
-    title: 'Electrical Circuits – DC Analysis',
-    category: 'Electrical',
-    instructor: 'Dr. Karim Saleh',
-    initials: 'KS',
-    lessons: 8,
-    completedLessons: 0,
-    duration: '4h 55m',
-    color: '#042a4e',
-    semester: 2,
-    status: 'paused',
-    lastAccessed: '2 weeks ago',
-  }),
-  new StudentCourse({
-    id: 6,
-    title: 'Technical English for Engineers',
-    category: 'Language',
-    instructor: 'Ms. Nadia Youssef',
-    initials: 'NY',
-    lessons: 8,
-    completedLessons: 7,
-    duration: '2h 30m',
-    color: '#1a4a7a',
-    semester: 2,
-    status: 'active',
-    lastAccessed: '1 hour ago',
-  }),
-]
+import axios from 'axios'
+import { API_BASE_URL } from '../../config/api'
 
 const TABS = [
-  { key: 'all',       label: 'All Courses' },
-  { key: 'active',    label: 'In Progress'  },
-  { key: 'completed', label: 'Completed'    },
-  { key: 'paused',    label: 'Paused'       },
+  { key: 'all', label: 'All Purchases' },
+  { key: 'courses', label: 'Full Courses' },
+  { key: 'videos', label: 'Single Videos' },
 ]
 
 const SORTS = [
-  { key: 'recent',   label: 'Recent'   },
-  { key: 'progress', label: 'Progress' },
-  { key: 'title',    label: 'A → Z'    },
+  { key: 'recent', label: 'Recent' },
+  { key: 'title', label: 'A → Z' },
 ]
 
-const EnrolledCourseCard = ({ course }) => {
+const getInitials = (value) => {
+  if (!value) return 'SC'
+
+  return value
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase()
+}
+
+const toCoursePurchaseCard = (purchase, index) => ({
+  id: `course-${purchase.id}`,
+  kind: 'course',
+  title: purchase.title,
+  category: purchase.category,
+  instructor: purchase.instructor,
+  initials: getInitials(purchase.instructor),
+  duration: purchase.duration,
+  semester: purchase.semester,
+  color: index % 2 === 0 ? '#042a4e' : '#1a4a7a',
+  purchasedAt: purchase.purchased_at,
+  price: purchase.price,
+  lessons: purchase.lessons,
+  courseId: purchase.course_id,
+})
+
+const toVideoPurchaseCard = (purchase) => ({
+  id: `video-${purchase.id}`,
+  kind: 'video',
+  title: purchase.video_title,
+  courseTitle: purchase.course_title,
+  category: purchase.category,
+  instructor: purchase.instructor,
+  duration: purchase.duration,
+  purchasedAt: purchase.purchased_at,
+  price: purchase.video_price,
+  videoId: purchase.video_id,
+  courseId: purchase.course_id,
+})
+
+const formatPurchasedAt = (value) => {
+  if (!value) return 'Recently purchased'
+
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return 'Recently purchased'
+
+  return date.toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
+}
+
+const PurchasedCourseCard = ({ course }) => {
   const navigate = useNavigate()
-  const pct = course.getProgressPercent()
 
   return (
     <div className="scp-card">
-
-      {/* Banner */}
-      <div className={`scp-card__banner ${course.getBannerClass()}`}>
+      <div className={`scp-card__banner ${course.color === '#1a4a7a' ? 'scp-card__banner--blue' : 'scp-card__banner--dark'}`}>
         <span className="scp-card__category">{course.category}</span>
-        <span className={`scp-card__status-badge ${course.getStatusBadgeClass()}`}>
-          {course.getStatusLabel()}
+        <span className="scp-card__status-badge scp-card__status-badge--active">
+          Purchased
         </span>
       </div>
 
-      {/* Body */}
       <div className="scp-card__body">
         <h3 className="scp-card__title">{course.title}</h3>
         <div className="scp-card__meta">
           <span className="scp-card__meta-item">🎥 {course.lessons} Videos</span>
           <span className="scp-card__meta-item">⏱ {course.duration}</span>
-          <span className="scp-card__meta-item">🕐 {course.lastAccessed}</span>
+          <span className="scp-card__meta-item">🕐 {formatPurchasedAt(course.purchasedAt)}</span>
         </div>
       </div>
 
-      {/* Progress */}
       <div className="scp-card__progress">
         <div className="scp-card__progress-header">
-          <span className="scp-card__progress-label">Progress</span>
-          <span className="scp-card__progress-pct">{pct}%</span>
-        </div>
-        <div className="scp-card__progress-track">
-          <div
-            className={`scp-card__progress-fill ${course.getProgressFillClass()}`}
-            style={{ width: `${pct}%` }}
-          />
+          <span className="scp-card__progress-label">Purchase</span>
+          <span className="scp-card__progress-pct">{course.price}</span>
         </div>
         <p className="scp-card__progress-lessons">
-          {course.completedLessons} of {course.lessons} lessons unlocked
+          {course.semester ? `Semester ${course.semester} course` : 'Full course access'}
         </p>
       </div>
 
-      {/* Footer */}
       <div className="scp-card__footer">
         <div className="scp-card__instructor">
           <div className="scp-card__avatar">{course.initials}</div>
           <span className="scp-card__instructor-name">{course.instructor}</span>
         </div>
         <button
-          className={`scp-card__continue-btn ${pct >= 100 ? 'scp-card__continue-btn--done' : ''}`}
-          onClick={() => navigate(`/courses/${course.id}`)}
+          className="scp-card__continue-btn"
+          onClick={() => navigate(`/courses/${course.courseId}`)}
         >
-          {pct >= 100 ? 'Review →' : 'Continue →'}
+          Open Course →
         </button>
       </div>
+    </div>
+  )
+}
 
+const PurchasedVideoCard = ({ video }) => {
+  const navigate = useNavigate()
+
+  return (
+    <div className="scp-video-card">
+      <div className="scp-video-card__top">
+        <span className="scp-video-card__tag">Single Video</span>
+        <span className="scp-video-card__price">{video.price}</span>
+      </div>
+      <h3 className="scp-video-card__title">{video.title}</h3>
+      <p className="scp-video-card__course">From {video.courseTitle}</p>
+      <div className="scp-video-card__meta">
+        <span>🎥 {video.category}</span>
+        <span>⏱ {video.duration || 'Unlocked'}</span>
+        <span>🕐 {formatPurchasedAt(video.purchasedAt)}</span>
+      </div>
+      <button className="scp-video-card__btn" onClick={() => navigate(`/courses/${video.courseId}`)}>
+        View Course →
+      </button>
     </div>
   )
 }
@@ -167,12 +144,73 @@ const StudentCoursePage = () => {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('all')
   const [activeSort, setActiveSort] = useState('recent')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [coursePurchases, setCoursePurchases] = useState([])
+  const [videoPurchases, setVideoPurchases] = useState([])
 
-  const filtered = StudentCoursesAnalytics.filterByTab(enrolledCourses, activeTab)
-  const sorted = StudentCoursesAnalytics.sortCourses(filtered, activeSort)
-  const { totalCourses, completedCourses, unlockedLessons, overallPct } =
-    StudentCoursesAnalytics.getHeaderStats(enrolledCourses)
-  const tabCounts = StudentCoursesAnalytics.getTabCounts(enrolledCourses)
+  useEffect(() => {
+    const fetchPurchases = async () => {
+      try {
+        setLoading(true)
+        setError('')
+
+        const storedUser = JSON.parse(localStorage.getItem('user'))
+
+        if (!storedUser?.id) {
+          setCoursePurchases([])
+          setVideoPurchases([])
+          setError('You are not logged in.')
+          return
+        }
+
+        const response = await axios.get(
+          `${API_BASE_URL}/api/purchases/student/${storedUser.id}`
+        )
+
+        setCoursePurchases(
+          (response.data.enrollments || []).map((purchase, index) =>
+            toCoursePurchaseCard(purchase, index)
+          )
+        )
+        setVideoPurchases(
+          (response.data.videoPurchases || []).map((purchase) =>
+            toVideoPurchaseCard(purchase)
+          )
+        )
+      } catch (err) {
+        console.error(err)
+        setError(err.response?.data?.message || 'Failed to load your purchases.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchPurchases()
+  }, [])
+
+  const allPurchases = [...coursePurchases, ...videoPurchases]
+
+  const filtered = allPurchases.filter((purchase) => {
+    if (activeTab === 'all') return true
+    if (activeTab === 'courses') return purchase.kind === 'course'
+    if (activeTab === 'videos') return purchase.kind === 'video'
+    return true
+  })
+
+  const sorted = [...filtered].sort((a, b) => {
+    if (activeSort === 'title') return a.title.localeCompare(b.title)
+
+    const aTime = new Date(a.purchasedAt || 0).getTime()
+    const bTime = new Date(b.purchasedAt || 0).getTime()
+    return bTime - aTime
+  })
+
+  const tabCounts = {
+    all: allPurchases.length,
+    courses: coursePurchases.length,
+    videos: videoPurchases.length,
+  }
 
   return (
     <div className="scp-page">
@@ -183,37 +221,21 @@ const StudentCoursePage = () => {
           <div className="scp-header__left">
             <span className="scp-header__tag">My Learning</span>
             <h1 className="scp-header__title">My Courses</h1>
-            <p className="scp-header__sub">Track your progress across all enrolled courses</p>
+            <p className="scp-header__sub">Review the courses and videos you have purchased</p>
           </div>
           <div className="scp-header__stats">
             <div className="scp-header__stat-pill">
-              <span className="scp-header__stat-num">{totalCourses}</span>
-              <span className="scp-header__stat-label">Enrolled</span>
+              <span className="scp-header__stat-num">{coursePurchases.length}</span>
+              <span className="scp-header__stat-label">Courses</span>
             </div>
             <div className="scp-header__stat-pill">
-              <span className="scp-header__stat-num">{completedCourses}</span>
-              <span className="scp-header__stat-label">Completed</span>
+              <span className="scp-header__stat-num">{videoPurchases.length}</span>
+              <span className="scp-header__stat-label">Videos</span>
             </div>
             <div className="scp-header__stat-pill">
-              <span className="scp-header__stat-num">{unlockedLessons}</span>
-              <span className="scp-header__stat-label">Videos Done</span>
+              <span className="scp-header__stat-num">{allPurchases.length}</span>
+              <span className="scp-header__stat-label">Total</span>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Overall progress bar ── */}
-      <div className="scp-overall-progress">
-        <div className="scp-overall-progress__inner">
-          <div className="scp-overall-progress__row">
-            <span className="scp-overall-progress__label">Overall Progress</span>
-            <div className="scp-overall-progress__track">
-              <div
-                className="scp-overall-progress__fill"
-                style={{ width: `${overallPct}%` }}
-              />
-            </div>
-            <span className="scp-overall-progress__pct">{overallPct}%</span>
           </div>
         </div>
       </div>
@@ -237,39 +259,63 @@ const StudentCoursePage = () => {
       {/* ── Body ── */}
       <div className="scp-body">
 
-        {/* Toolbar */}
-        <div className="scp-toolbar">
-          <p className="scp-toolbar__left">
-            Showing <strong>{sorted.length}</strong> course{sorted.length !== 1 ? 's' : ''}
-          </p>
-          <div className="scp-toolbar__right">
-            {SORTS.map(s => (
-              <button
-                key={s.key}
-                className={`scp-sort-btn ${activeSort === s.key ? 'scp-sort-btn--active' : ''}`}
-                onClick={() => setActiveSort(s.key)}
-              >
-                {s.label}
-              </button>
-            ))}
+        {loading && (
+          <div className="scp-empty">
+            <div className="scp-empty__emoji">⌛</div>
+            <p className="scp-empty__title">Loading your purchases...</p>
+            <p className="scp-empty__sub">Fetching your enrolled courses and video purchases.</p>
           </div>
-        </div>
+        )}
+
+        {!loading && error && (
+          <div className="scp-empty">
+            <div className="scp-empty__emoji">⚠️</div>
+            <p className="scp-empty__title">{error}</p>
+            <p className="scp-empty__sub">Log in again and refresh the page.</p>
+          </div>
+        )}
+
+        {/* Toolbar */}
+        {!loading && !error && (
+          <div className="scp-toolbar">
+            <p className="scp-toolbar__left">
+              Showing <strong>{sorted.length}</strong> purchase{sorted.length !== 1 ? 's' : ''}
+            </p>
+            <div className="scp-toolbar__right">
+              {SORTS.map((s) => (
+                <button
+                  key={s.key}
+                  className={`scp-sort-btn ${activeSort === s.key ? 'scp-sort-btn--active' : ''}`}
+                  onClick={() => setActiveSort(s.key)}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Grid or Empty */}
-        {sorted.length === 0 ? (
+        {!loading && !error && sorted.length === 0 && (
           <div className="scp-empty">
             <div className="scp-empty__emoji">📭</div>
-            <p className="scp-empty__title">No courses here yet.</p>
-            <p className="scp-empty__sub">Browse the course catalog and enroll in your first course.</p>
+            <p className="scp-empty__title">No purchases yet.</p>
+            <p className="scp-empty__sub">Browse the catalog and buy a course or a single video.</p>
             <button className="scp-empty__btn" onClick={() => navigate('/courses')}>
               Browse Courses →
             </button>
           </div>
-        ) : (
+        )}
+
+        {!loading && !error && sorted.length > 0 && (
           <div className="scp-grid">
-            {sorted.map(course => (
-              <EnrolledCourseCard key={course.id} course={course} />
-            ))}
+            {sorted.map((purchase) =>
+              purchase.kind === 'course' ? (
+                <PurchasedCourseCard key={purchase.id} course={purchase} />
+              ) : (
+                <PurchasedVideoCard key={purchase.id} video={purchase} />
+              )
+            )}
           </div>
         )}
 
