@@ -98,6 +98,7 @@ export const getCoursesByEducatorId = async (req, res) => {
             title,
             description,
             duration,
+            duration AS duration_seconds,
             price,
             video_url,
             order_index
@@ -112,6 +113,7 @@ export const getCoursesByEducatorId = async (req, res) => {
         const courseId = video.course_id
         const formattedVideo = {
           ...video,
+          duration_seconds: video.duration_seconds,
           duration:
             typeof video.duration === 'number'
               ? `${Math.floor(video.duration / 60)}m ${video.duration % 60}s`
@@ -183,6 +185,7 @@ export const getCourseById = async (req, res) => {
           title,
           description,
           duration,
+          duration AS duration_seconds,
           price,
           video_url,
           order_index
@@ -199,6 +202,7 @@ export const getCourseById = async (req, res) => {
 
     const formattedVideos = videos.map(v => ({
       ...v,
+      duration_seconds: v.duration_seconds,
       duration:
         typeof v.duration === 'number'
           ? `${Math.floor(v.duration / 60)}m ${v.duration % 60}s`

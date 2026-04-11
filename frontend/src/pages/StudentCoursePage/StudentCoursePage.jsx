@@ -1,8 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './StudentCoursePage.css'
 import axios from 'axios'
 import { API_BASE_URL } from '../../config/api'
+import {
+  formatDurationFromSeconds,
+  getCourseProgressStats,
+  getVideoProgressPercent,
+  getVideoProgressRecord,
+  getWatchedSeconds,
+  normalizeDurationSeconds,
+} from '../../utils/videoProgress'
 
 const TABS = [
   { key: 'all', label: 'All Purchases' },
@@ -27,50 +35,101 @@ const getInitials = (value) => {
     .toUpperCase()
 }
 
-const toCoursePurchaseCard = (purchase, index) => ({
-  id: `course-${purchase.id}`,
-  kind: 'course',
-  title: purchase.title,
-  category: purchase.category,
-  instructor: purchase.instructor,
-  initials: getInitials(purchase.instructor),
-  duration: purchase.duration,
-  semester: purchase.semester,
-  color: index % 2 === 0 ? '#042a4e' : '#1a4a7a',
-  purchasedAt: purchase.purchased_at,
-  price: purchase.price,
-  lessons: purchase.lessons,
-  courseId: purchase.course_id,
-  completedLessons: Math.max(1, Math.min(Number(purchase.lessons) || 8, 6)),
-  progressPercent: 75,
-  progressLabel: 'In Progress',
-  accessLevel: 'Full course access',
-  lastAccessed: '2 hours ago',
-  nextLesson: 'Lesson 6 • Practice Session',
-})
+const getProgressFillClass = (progressPercent) => {
+  if (progressPercent >= 100) return 'scp-card__progress-fill--done'
+  if (progressPercent >= 60) return 'scp-card__progress-fill--high'
+  if (progressPercent >= 30) return 'scp-card__progress-fill--mid'
+  return 'scp-card__progress-fill--low'
+}
 
-const toVideoPurchaseCard = (purchase) => ({
-  id: `video-${purchase.id}`,
-  kind: 'video',
-  title: purchase.video_title,
-  courseTitle: purchase.course_title,
-  category: purchase.category,
-  instructor: purchase.instructor,
-  initials: getInitials(purchase.instructor),
-  duration: purchase.duration,
-  purchasedAt: purchase.purchased_at,
-  price: purchase.video_price,
-  videoId: purchase.video_id,
-  courseId: purchase.course_id,
-  color: '#1a4a7a',
-  lessons: 1,
-  completedLessons: 1,
-  progressPercent: 100,
-  progressLabel: 'Unlocked',
-  progressNote: 'Single video access',
-  accessLevel: 'Instant access',
-  videoTitle: purchase.video_title,
-})
+const formatWatchedMinutes = (watchedSeconds, durationSeconds) => {
+  const totalMinutes = Math.max(1, Math.ceil(normalizeDurationSeconds(durationSeconds) / 60))
+  const watchedMinutes = Math.min(totalMinutes, Math.floor(Math.max(0, watchedSeconds) / 60))
+
+  return `${watchedMinutes} of ${totalMinutes} min watched`
+}
+
+const toCoursePurchaseCard = (purchase, index) => {
+  const videos = Array.isArray(purchase.videos)
+    ? purchase.videos.map((video) => ({
+        id: video.id,
+        title: video.title,
+        durationSeconds: normalizeDurationSeconds(video.duration_seconds ?? video.duration),
+      }))
+    : []
+
+  const totalDurationSeconds = videos.reduce(
+    (sum, video) => sum + normalizeDurationSeconds(video.durationSeconds),
+    0
+  )
+  const totalLessons = videos.length > 0
+    ? videos.length
+    : (Number(purchase.lessons) || 0)
+
+  const progress = getCourseProgressStats(videos, totalLessons)
+
+  return {
+    id: `course-${purchase.id}`,
+    kind: 'course',
+    title: purchase.title,
+    category: purchase.category,
+    instructor: purchase.instructor,
+    initials: getInitials(purchase.instructor),
+    duration: totalDurationSeconds > 0
+      ? formatDurationFromSeconds(totalDurationSeconds)
+      : purchase.duration,
+    semester: purchase.semester,
+    color: index % 2 === 0 ? '#042a4e' : '#1a4a7a',
+    purchasedAt: purchase.purchased_at,
+    price: purchase.price,
+    lessons: totalLessons,
+    courseId: purchase.course_id,
+    videos,
+    completedLessons: progress.completedLessons,
+    progressPercent: progress.progressPercent,
+    progressLabel: progress.progressPercent >= 100 ? 'Completed' : 'In Progress',
+    accessLevel: 'Full course access',
+    lastAccessed: '2 hours ago',
+    nextLesson:
+      progress.completedLessons >= totalLessons
+        ? 'All lessons completed'
+        : `Lesson ${progress.completedLessons + 1} • Continue`,
+  }
+}
+
+const toVideoPurchaseCard = (purchase) => {
+  const durationSeconds = normalizeDurationSeconds(purchase.duration_seconds ?? purchase.raw_duration)
+  const progressRecord = getVideoProgressRecord(purchase.video_id)
+  const progressPercent = getVideoProgressPercent(progressRecord, durationSeconds)
+  const watchedSeconds = progressRecord?.completed
+    ? durationSeconds
+    : Math.min(durationSeconds, getWatchedSeconds(progressRecord))
+
+  return {
+    id: `video-${purchase.id}`,
+    kind: 'video',
+    title: purchase.video_title,
+    courseTitle: purchase.course_title,
+    category: purchase.category,
+    instructor: purchase.instructor,
+    initials: getInitials(purchase.instructor),
+    duration: formatDurationFromSeconds(durationSeconds),
+    durationSeconds,
+    watchedSeconds,
+    purchasedAt: purchase.purchased_at,
+    price: purchase.video_price,
+    videoId: purchase.video_id,
+    courseId: purchase.course_id,
+    color: '#1a4a7a',
+    lessons: 1,
+    completedLessons: progressPercent >= 100 ? 1 : 0,
+    progressPercent,
+    progressLabel: progressPercent >= 100 ? 'Completed' : 'In Progress',
+    progressNote: formatWatchedMinutes(watchedSeconds, durationSeconds),
+    accessLevel: 'Instant access',
+    videoTitle: purchase.video_title,
+  }
+}
 
 const formatPurchasedAt = (value) => {
   if (!value) return 'Recently purchased'
@@ -115,12 +174,12 @@ const PurchasedCourseCard = ({ course }) => {
         </div>
         <div className="scp-card__progress-track">
           <div
-            className="scp-card__progress-fill scp-card__progress-fill--high"
+            className={`scp-card__progress-fill ${getProgressFillClass(course.progressPercent)}`}
             style={{ width: `${course.progressPercent}%` }}
           />
         </div>
         <p className="scp-card__progress-lessons">
-          {course.completedLessons} of {course.lessons} lessons completed 
+          {course.completedLessons} of {course.lessons} videos completed
         </p>
       </div>
 
@@ -168,12 +227,12 @@ const PurchasedVideoCard = ({ video }) => {
         </div>
         <div className="scp-card__progress-track">
           <div
-            className="scp-card__progress-fill scp-card__progress-fill--done"
+            className={`scp-card__progress-fill ${getProgressFillClass(video.progressPercent)}`}
             style={{ width: `${video.progressPercent}%` }}
           />
         </div>
         <p className="scp-card__progress-lessons">
-          {video.completedLessons} of {video.lessons} lessons completed
+          {video.progressPercent >= 100 ? 'Video fully watched' : video.progressNote}
         </p>
       </div>
 
@@ -184,7 +243,7 @@ const PurchasedVideoCard = ({ video }) => {
         </div>
         <button
           className="scp-card__continue-btn"
-          onClick={() => navigate(`/courses/${video.courseId}`)}
+          onClick={() => navigate(`/courses/${video.courseId}?videoId=${video.videoId}`)}
         >
           Open Video →
         </button>
@@ -199,8 +258,9 @@ const StudentCoursePage = () => {
   const [activeSort, setActiveSort] = useState('recent')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [coursePurchases, setCoursePurchases] = useState([])
-  const [videoPurchases, setVideoPurchases] = useState([])
+  const [enrollmentsRaw, setEnrollmentsRaw] = useState([])
+  const [videoPurchasesRaw, setVideoPurchasesRaw] = useState([])
+  const [progressTick, setProgressTick] = useState(0)
 
   useEffect(() => {
     const fetchPurchases = async () => {
@@ -211,8 +271,8 @@ const StudentCoursePage = () => {
         const storedUser = JSON.parse(localStorage.getItem('user'))
 
         if (!storedUser?.id) {
-          setCoursePurchases([])
-          setVideoPurchases([])
+          setEnrollmentsRaw([])
+          setVideoPurchasesRaw([])
           setError('You are not logged in.')
           return
         }
@@ -221,16 +281,8 @@ const StudentCoursePage = () => {
           `${API_BASE_URL}/api/purchases/student/${storedUser.id}`
         )
 
-        setCoursePurchases(
-          (response.data.enrollments || []).map((purchase, index) =>
-            toCoursePurchaseCard(purchase, index)
-          )
-        )
-        setVideoPurchases(
-          (response.data.videoPurchases || []).map((purchase) =>
-            toVideoPurchaseCard(purchase)
-          )
-        )
+        setEnrollmentsRaw(response.data.enrollments || [])
+        setVideoPurchasesRaw(response.data.videoPurchases || [])
       } catch (err) {
         console.error(err)
         setError(err.response?.data?.message || 'Failed to load your purchases.')
@@ -241,6 +293,40 @@ const StudentCoursePage = () => {
 
     fetchPurchases()
   }, [])
+
+  useEffect(() => {
+    const handleProgressRefresh = () => {
+      setProgressTick((value) => value + 1)
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        handleProgressRefresh()
+      }
+    }
+
+    window.addEventListener('qacademy-video-progress-updated', handleProgressRefresh)
+    window.addEventListener('focus', handleProgressRefresh)
+    window.addEventListener('storage', handleProgressRefresh)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      window.removeEventListener('qacademy-video-progress-updated', handleProgressRefresh)
+      window.removeEventListener('focus', handleProgressRefresh)
+      window.removeEventListener('storage', handleProgressRefresh)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [])
+
+  const coursePurchases = useMemo(
+    () => enrollmentsRaw.map((purchase, index) => toCoursePurchaseCard(purchase, index)),
+    [enrollmentsRaw, progressTick]
+  )
+
+  const videoPurchases = useMemo(
+    () => videoPurchasesRaw.map((purchase) => toVideoPurchaseCard(purchase)),
+    [videoPurchasesRaw, progressTick]
+  )
 
   const allPurchases = [...coursePurchases, ...videoPurchases]
 

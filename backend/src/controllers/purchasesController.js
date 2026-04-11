@@ -7,7 +7,16 @@ const formatDuration = (duration) => {
     return duration;
   }
 
-  return `${Math.floor(duration / 60)}h ${duration % 60}m`;
+  const totalSeconds = Math.max(0, Math.round(duration));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`;
+  }
+
+  return `${minutes}m ${seconds}s`;
 };
 
 const validatePurchaseIds = (res, studentId, itemId, itemLabel) => {
@@ -116,6 +125,7 @@ export const getStudentEnrollments = async (req, res) => {
             course_id,
             title,
             duration,
+            duration AS duration_seconds,
             order_index,
             video_url
           FROM videos
@@ -133,6 +143,7 @@ export const getStudentEnrollments = async (req, res) => {
 
         acc[courseId].push({
           ...video,
+          duration_seconds: video.duration_seconds,
           duration: formatDuration(video.duration),
         });
 
@@ -219,6 +230,7 @@ export const getStudentVideoPurchases = async (req, res) => {
           v.title AS video_title,
           v.description AS video_description,
           v.duration AS raw_duration,
+          v.duration AS duration_seconds,
           v.video_url,
           CONCAT('$', v.price) AS video_price,
           v.order_index,
@@ -241,6 +253,7 @@ export const getStudentVideoPurchases = async (req, res) => {
     return res.json(
       rows.map((row) => ({
         ...row,
+        duration_seconds: row.duration_seconds,
         duration: formatDuration(row.raw_duration),
       }))
     );
@@ -296,6 +309,7 @@ export const getStudentPurchases = async (req, res) => {
             v.title AS video_title,
             v.description AS video_description,
             v.duration AS raw_duration,
+            v.duration AS duration_seconds,
             v.video_url,
             CONCAT('$', v.price) AS video_price,
             v.order_index,
@@ -329,6 +343,7 @@ export const getStudentPurchases = async (req, res) => {
             course_id,
             title,
             duration,
+            duration AS duration_seconds,
             order_index,
             video_url
           FROM videos
@@ -346,6 +361,7 @@ export const getStudentPurchases = async (req, res) => {
 
         acc[courseId].push({
           ...video,
+          duration_seconds: video.duration_seconds,
           duration: formatDuration(video.duration),
         });
 
@@ -361,6 +377,7 @@ export const getStudentPurchases = async (req, res) => {
 
     const videoPurchaseRows = videoPurchases[0].map((row) => ({
       ...row,
+      duration_seconds: row.duration_seconds,
       duration: formatDuration(row.raw_duration),
     }));
 

@@ -1,8 +1,17 @@
 // src/pages/CourseDetailPage.jsx
 import React, { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { API_BASE_URL } from '../../config/api'
 import './CourseDetailPage.css'
+import {
+  formatDurationFromSeconds,
+  getVideoProgressPercent,
+  getVideoProgressRecord,
+  getWatchedSeconds,
+  normalizeDurationSeconds,
+  readVideoProgressStore,
+  upsertVideoProgress,
+} from '../../utils/videoProgress'
 
 const getCourseColorClass = (color) => (color === '#1a4a7a' ? 'cdp-player--blue' : 'cdp-player--dark')
 const getSideBannerColorClass = (color) => (color === '#1a4a7a' ? 'cdp-side-card__banner--blue' : 'cdp-side-card__banner--dark')
@@ -24,7 +33,8 @@ const mapCourse = (course) => ({
 const mapVideo = (video, index) => ({
   id: video.id,
   title: video.title || `Video ${index + 1}`,
-  duration: video.duration || '0m 0s',
+  duration: formatDurationFromSeconds(video.duration_seconds ?? video.duration),
+  durationSeconds: normalizeDurationSeconds(video.duration_seconds ?? video.duration),
   free: Number(video.price) === 0 || index === 0,
   videoUrl: video.video_url || '',
 })
@@ -95,7 +105,7 @@ const UnlockModal = ({ target, onClose, onUnlock }) => {
 }
 
 // ── Video player ───────────────────────────────────────────────────────────
-const VideoPlayer = ({ topic, unlocked, onRequestUnlock, courseColor }) => {
+const VideoPlayer = ({ topic, unlocked, onRequestUnlock, courseColor, onWatchProgress }) => {
   if (!topic) {
     return (
       <div className="cdp-player cdp-player--empty">
@@ -129,6 +139,22 @@ const VideoPlayer = ({ topic, unlocked, onRequestUnlock, courseColor }) => {
           controls
           playsInline
           controlsList="nodownload"
+          onLoadedMetadata={(event) => {
+            onWatchProgress?.(topic, event.currentTarget.currentTime, event.currentTarget.duration)
+
+            const progressRecord = getVideoProgressRecord(topic.id)
+            const resumeSeconds = Math.min(
+              topic.durationSeconds || event.currentTarget.duration || 0,
+              getWatchedSeconds(progressRecord)
+            )
+
+            if (resumeSeconds > 0) {
+              event.currentTarget.currentTime = resumeSeconds
+            }
+          }}
+          onTimeUpdate={(event) => onWatchProgress?.(topic, event.currentTarget.currentTime, event.currentTarget.duration)}
+          onPause={(event) => onWatchProgress?.(topic, event.currentTarget.currentTime, event.currentTarget.duration)}
+          onEnded={() => onWatchProgress?.(topic, topic.durationSeconds, topic.durationSeconds, true)}
         />
       ) : (
         <>
@@ -145,11 +171,13 @@ const VideoPlayer = ({ topic, unlocked, onRequestUnlock, courseColor }) => {
 const CourseDetailPage = () => {
   const { id }   = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const [course, setCourse] = useState(null)
   const [topics, setTopics] = useState([])
   const [activeTopic, setActiveTopic] = useState(null)
   const [unlockedTopics, setUnlockedTopics] = useState(new Set())
   const [fullCourseUnlocked, setFullCourseUnlocked] = useState(false)
+  const [videoProgressById, setVideoProgressById] = useState(() => readVideoProgressStore())
   const [modal, setModal] = useState(null)
   const [loading, setLoading] = useState(true)
   const [fetchError, setFetchError] = useState('')
@@ -166,6 +194,7 @@ const CourseDetailPage = () => {
         setActiveTopic(null)
         setUnlockedTopics(new Set())
         setFullCourseUnlocked(false)
+        setVideoProgressById(readVideoProgressStore())
 
         const res = await fetch(`${API_BASE_URL}/api/courses/${id}`)
         if (!res.ok) {
@@ -182,12 +211,43 @@ const CourseDetailPage = () => {
           ? data.videos.map(mapVideo)
           : []
 
+        let hasFullCoursePurchase = false
+        const storedUserRaw = localStorage.getItem('user')
+        if (storedUserRaw) {
+          try {
+            const storedUser = JSON.parse(storedUserRaw)
+            if (storedUser?.id) {
+              const purchasesRes = await fetch(`${API_BASE_URL}/api/purchases/student/${storedUser.id}`)
+              if (purchasesRes.ok) {
+                const purchasesData = await purchasesRes.json()
+                hasFullCoursePurchase = (purchasesData.enrollments || []).some(
+                  (enrollment) => Number(enrollment.course_id) === Number(id)
+                )
+              }
+            }
+          } catch (purchaseCheckErr) {
+            console.error('Failed to check full-course purchase status:', purchaseCheckErr)
+          }
+        }
+
         if (!cancelled) {
           setCourse(normalizedCourse)
           setTopics(normalizedTopics)
+          setFullCourseUnlocked(hasFullCoursePurchase)
+
           if (normalizedTopics.length > 0) {
-            setActiveTopic(normalizedTopics[0])
-            setUnlockedTopics(new Set([normalizedTopics[0].id]))
+            const requestedVideoId = Number(new URLSearchParams(location.search).get('videoId'))
+            const requestedTopic = Number.isInteger(requestedVideoId)
+              ? normalizedTopics.find((topic) => Number(topic.id) === requestedVideoId)
+              : null
+            const initialTopic = requestedTopic || normalizedTopics[0]
+
+            setActiveTopic(initialTopic)
+            setUnlockedTopics(
+              hasFullCoursePurchase
+                ? new Set(normalizedTopics.map((topic) => topic.id))
+                : new Set([initialTopic.id])
+            )
           }
         }
       } catch (error) {
@@ -207,7 +267,7 @@ const CourseDetailPage = () => {
     return () => {
       cancelled = true
     }
-  }, [id])
+  }, [id, location.search])
 
   if (loading) {
     return (
@@ -243,6 +303,9 @@ const CourseDetailPage = () => {
 
   const isTopicUnlocked = (t) => t.free || fullCourseUnlocked || unlockedTopics.has(t.id)
 
+  const isTopicCompleted = (topic) =>
+    getVideoProgressPercent(videoProgressById[topic.id], topic.durationSeconds) >= 100
+
   const handleUnlock = (target) => {
     if (target === 'full') {
       setFullCourseUnlocked(true)
@@ -252,13 +315,35 @@ const CourseDetailPage = () => {
     }
   }
 
+  const handleWatchProgress = (topic, watchedSeconds, fallbackDurationSeconds, completed = false) => {
+    const durationSeconds = topic.durationSeconds || normalizeDurationSeconds(fallbackDurationSeconds)
+    const nextRecord = upsertVideoProgress(topic.id, {
+      watchedSeconds,
+      durationSeconds,
+      completed,
+    })
+
+    setVideoProgressById((prev) => ({
+      ...prev,
+      [topic.id]: nextRecord,
+    }))
+  }
+
   const handleTopicClick = (topic) => {
     setActiveTopic(topic)
     if (!isTopicUnlocked(topic)) setModal({ type: 'video', topic })
   }
 
-  const completedCount = topics.filter(t => isTopicUnlocked(t)).length
-  const progressPct = topics.length > 0 ? (completedCount / topics.length) * 100 : 0
+  const completedCount = topics.filter((topic) => isTopicCompleted(topic)).length
+  const progressPct = topics.length > 0 ? Math.round((completedCount / topics.length) * 100) : 0
+  const sideCardLessons = topics.length > 0 ? topics.length : course.lessons
+  const sideCardDurationSeconds = topics.reduce(
+    (sum, topic) => sum + normalizeDurationSeconds(topic.durationSeconds),
+    0
+  )
+  const sideCardDuration = sideCardDurationSeconds > 0
+    ? formatDurationFromSeconds(sideCardDurationSeconds)
+    : course.duration
 
   return (
     <div className="cdp-page">
@@ -285,6 +370,7 @@ const CourseDetailPage = () => {
             unlocked={activeTopic ? isTopicUnlocked(activeTopic) : false}
             onRequestUnlock={(topic) => setModal({ type: 'video', topic })}
             courseColor={course.color}
+            onWatchProgress={handleWatchProgress}
           />
 
           {activeTopic && (
@@ -292,7 +378,7 @@ const CourseDetailPage = () => {
               <div>
                 <h2 className="cdp-video-meta__title">{activeTopic.title}</h2>
                 <p className="cdp-video-meta__sub">
-                  <span>⏱ {activeTopic.duration}</span>
+                  <span>⏱ {formatDurationFromSeconds(activeTopic.durationSeconds ?? activeTopic.duration)}</span>
                   <span>📚 {course.category}</span>
                   <span>👤 {course.instructor}</span>
                 </p>
@@ -311,7 +397,7 @@ const CourseDetailPage = () => {
           <div className="cdp-progress">
             <div className="cdp-progress__header">
               <span className="cdp-progress__label">Course Progress</span>
-              <span className="cdp-progress__label">{completedCount} / {topics.length} unlocked</span>
+              <span className="cdp-progress__label">{completedCount} / {topics.length} videos completed</span>
             </div>
             <div className="cdp-progress__track">
               <div className="cdp-progress__fill" style={{ width: `${progressPct}%` }} />
@@ -331,15 +417,15 @@ const CourseDetailPage = () => {
             <div className="cdp-side-card__body">
               <h3 className="cdp-side-card__title">{course.title}</h3>
               <div className="cdp-side-card__stats">
-                <span className="cdp-side-card__stat">🎥 {course.lessons} Videos</span>
-                <span className="cdp-side-card__stat">⏱ {course.duration}</span>
+                <span className="cdp-side-card__stat">🎥 {sideCardLessons} Videos</span>
+                <span className="cdp-side-card__stat">⏱ {sideCardDuration}</span>
                 <span className="cdp-side-card__stat">👤 {course.instructor}</span>
               </div>
             </div>
           </div>
 
           {/* Full course CTA */}
-          {!fullCourseUnlocked ? (
+          {!fullCourseUnlocked && (
             <div className="cdp-full-course">
               <p className="cdp-full-course__eyebrow">🎓 Get Everything</p>
               <p className="cdp-full-course__title">Buy the Full Course</p>
@@ -349,12 +435,6 @@ const CourseDetailPage = () => {
               <button className="cdp-full-course__btn" onClick={() => setModal({ type: 'full' })}>
                 Enter Course Code →
               </button>
-            </div>
-          ) : (
-            <div className="cdp-full-course cdp-full-course--unlocked">
-              <p className="cdp-full-course__unlocked-emoji">🎉</p>
-              <p className="cdp-full-course__unlocked-title">Full Course Unlocked!</p>
-              <p className="cdp-full-course__unlocked-sub">All videos are now available for you.</p>
             </div>
           )}
 
